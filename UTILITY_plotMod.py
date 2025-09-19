@@ -27,7 +27,40 @@ def plotMod(particle_group, key1='t', key2='p',
                   nice=True,
                   **kwargs):
     """
-    Derived from openPMD-beamphysics marginal_plot()
+    Create a 2D hexbin plot with marginal histograms for a ParticleGroup, derived from openPMD-beamphysics marginal_plot().
+
+    Parameters
+    ----------
+    particle_group : ParticleGroup
+        The particle group to plot.
+    key1 : str, default 't'
+        The key for the x-axis variable.
+    key2 : str, default 'p'
+        The key for the y-axis variable.
+    bins : int, optional
+        Number of bins for the histograms and hexbin. If None, determined automatically from particle count.
+    xlim : tuple, optional
+        Limits for the x-axis.
+    ylim : tuple, optional
+        Limits for the y-axis.
+    tex : bool, default True
+        Whether to use TeX-style labels.
+    nice : bool, default True
+        Whether to use nice units and scaling for axes.
+    **kwargs : dict
+        Additional keyword arguments passed to plt.figure().
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The created matplotlib figure.
+
+    Notes
+    -----
+    - The function closes all previous figures and disables interactive plotting.
+    - The joint plot shows a weighted hexbin of the selected variables, with marginal histograms above and to the right.
+    - Axes are labeled with units and optionally TeX formatting.
+    - Intended for quick visualization of beam phase space projections.
     """    
 
     plt.close('all')
@@ -124,7 +157,39 @@ def slicePlotMod(particle_group,
                nice=True,
                **kwargs):
     """
-    Derived from openPMD-beamphysics slice_plot()
+    Create a slice plot of beam statistics for a ParticleGroup, derived from openPMD-beamphysics slice_plot().
+
+    Parameters
+    ----------
+    particle_group : ParticleGroup
+        The particle group to plot.
+    *keys : str
+        Keys for the y-axis variables to plot (e.g., 'mean_px', 'mean_py').
+    n_slice : int, default 40
+        Number of slices to divide the beam into along the slice_key.
+    slice_key : str, optional
+        Key to slice along (e.g., 'z' or 't'). If None, uses 'z' if in t-coordinates, else 't'.
+    xlim : tuple, optional
+        Limits for the x-axis.
+    ylim : tuple, optional
+        Limits for the y-axis.
+    tex : bool, default True
+        Whether to use TeX-style labels.
+    nice : bool, default True
+        Whether to use nice units and scaling for axes.
+    **kwargs : dict
+        Additional keyword arguments passed to plt.subplots().
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The created matplotlib figure.
+
+    Notes
+    -----
+    - Plots the mean value of each key in each slice, with density shown as a filled region on a secondary y-axis.
+    - Axes are labeled with units and optionally TeX formatting.
+    - Useful for visualizing longitudinal structure and correlations in the beam.
     """    
 
     #NMM new
@@ -240,6 +305,23 @@ colorlist2=['#E2836A','#6a7ee2','#74e26a']
 def floorplan_sorter(ele):
     """
     ele is an element of a pandas dictionary made from the bmad floorplan (made to look like an elegant floorplan from my "elegant_helpers" file). This sorter parses the columns to make a "patch" for plotting purposes. See floorplan_patches().
+    Parse a floorplan element dictionary and return a matplotlib patch for plotting.
+
+    Parameters
+    ----------
+    ele : dict or pandas.Series
+        Element from a pandas DataFrame representing the floorplan.
+
+    Returns
+    -------
+    patch : matplotlib.patches.Patch or None
+        Patch object for plotting the element, or None if not applicable.
+
+    Notes
+    -----
+    - The patch color and type are determined by the element's type and name.
+    - Used internally by floorplan_patches().
+    
     """
     if ele['ds']==0:
         ele['ds']=0.05
@@ -279,15 +361,33 @@ def floorplan_patches(floorplan,zbounds=None):
     """
     This function returns a list of patches to be plotted (patches) and a list of patches for the legend (leg_patches). If zbounds=[zmin,zmax] is given then the plot is restricted to the bounds. 
     
-    Useage:
+    Usage:
     
     fp=SDDS(0)
     fp.load(LCLS2scS.flr)
     __,floorplan=sdds2pd(fp)
-    patches,leg_patches=flooplan_patches(floorplan,[3425,3750])
+    patches,leg_patches=floorplan_patches(floorplan,[3425,3750])
+
+    Parameters
+    ----------
+    floorplan : pandas.DataFrame
+        DataFrame containing floorplan information (columns: s, ds, ElementType, etc.).
+    zbounds : list or tuple, optional
+        [zmin, zmax] bounds for restricting the plot range. If None, uses full range.
+
+    Returns
+    -------
+    patches : list
+        List of matplotlib patch objects for the floorplan.
+    leg_patches : list
+        List of patch objects for the legend.
+
+    Notes
+    -----
+    - Used for visualizing the lattice layout in longitudinal plots.
     """
     if zbounds==None:
-        zbounds=[flooplan['s'].min(),flooplan['s'].max()]
+        zbounds=[floorplan['s'].min(),floorplan['s'].max()]
     sFloor=floorplan.s.astype(dtype=float);
     sFloor=sFloor.values
     ii=0;
@@ -305,6 +405,23 @@ def floorplan_patches(floorplan,zbounds=None):
 def floorplan_plot_partial(ax_fp,floorplan,zmin=0,zmax=2000):  
     """
     This function plots "patches" for basic elements in the lattice. This can help identify what you're looking at in a "z-plot".
+    Parameters
+    ----------
+    ax_fp : matplotlib.axes.Axes
+        The axis to plot the floorplan patches on.
+    floorplan : pandas.DataFrame
+        DataFrame containing floorplan information.
+    zmin : float, default 0
+        Minimum z position for the plot.
+    zmax : float, default 2000
+        Maximum z position for the plot.
+
+    Returns
+    -------
+    ax_fp : matplotlib.axes.Axes
+        The axis with the floorplan patches added.
+
+    
     """
     
     patches,leg_patches=floorplan_patches(floorplan,[zmin,zmax])
@@ -323,6 +440,22 @@ def floorplan_plot_partial(ax_fp,floorplan,zmin=0,zmax=2000):
 def format_longitudinal_plot(fig, floorplan):
     """
     This function helps format a "z-plot" by providing axes for the main plot and for the a floorplan_plot_partial. It also plots the floorplan.
+    
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure
+        The figure to add axes to.
+    floorplan : pandas.DataFrame
+        DataFrame containing floorplan information.
+
+    Returns
+    -------
+    ax : matplotlib.axes.Axes
+        The main plot axis.
+    ax_fp : matplotlib.axes.Axes
+        The floorplan axis.
+
+    
     """
     outer_grid=fig.add_gridspec(5,1,hspace=0)
     ax=fig.add_subplot(outer_grid[0:4,:])
@@ -339,6 +472,33 @@ def floorplanPlot(
     ymin = 0.1,
     ymax = 250
 ):
+    """
+    Plot the lattice floorplan and key beamline functions (beta, eta, etc.)
+
+    Parameters
+    ----------
+    tao : Tao
+        Active Tao simulation object.
+    zmin : float, default 13
+        Minimum z position for the plot.
+    zmax : float, default 1020
+        Maximum z position for the plot.
+    ymin : float, default 0.1
+        Minimum y-axis value for beta plots.
+    ymax : float, default 250
+        Maximum y-axis value for beta plots.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    - Reads the lattice and floorplan from Tao, extracts beta and eta functions, and plots them with the floorplan.
+    - Uses logarithmic scaling for beta functions and overlays eta functions on a secondary y-axis.
+    - Intended for visualizing the beamline layout and optics.
+    """
+
     elements=tao.lat_ele_list();
 
     

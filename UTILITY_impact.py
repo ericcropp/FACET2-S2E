@@ -23,6 +23,38 @@ def runImpact(
     returnImpactObject = False,
     **kwargs
 ):
+    """
+    Run an Impact-T simulation with specified parameters, including grid size, number of particles, etc.
+    Handles setup, autophasing, tracking, and output of the resulting beam.
+
+    Parameters
+    ----------
+    filePath : str, optional
+        Path to the working directory. Defaults to current directory.
+    impactGridCount : int, optional
+        Number of grid points in each dimension for Impact-T.
+    impactNumProcs : int, optional
+        Number of processors to use for Impact-T.
+    numMacroParticles : int, optional
+        Number of macroparticles to simulate.
+    GFILESuffix : str, optional
+        Suffix for the Distgen input file.
+    L0APhaseOffset : float, optional
+        Phase offset for L0A.
+    solenoidTValue : float, optional
+        Solenoid field value (T).
+    impactChargepC : float, optional
+        Total charge in pC.
+    returnImpactObject : bool, optional
+        If True, return the Impact object after simulation.
+    **kwargs : dict
+        Additional keyword arguments for configuration.
+
+    Returns
+    -------
+    Impact or None
+        Returns the Impact object if returnImpactObject is True, otherwise None.
+    """
     print("Running Impact")
     
     if not filePath:
@@ -149,6 +181,25 @@ def runImpact(
 def update_impact(I,settings=None,
                impact_config=None,
                verbose=False):
+    """
+    Update an Impact object with new settings.
+
+    Parameters
+    ----------
+    I : Impact
+        Impact object to update.
+    settings : dict, optional
+        Dictionary of settings to apply. Keys not starting with 'distgen:' are assumed to be Impact settings.
+    impact_config : dict, optional
+        Additional Impact configuration (unused).
+    verbose : bool, optional
+        If True, print each setting as it is applied.
+
+    Returns
+    -------
+    Impact
+        The updated Impact object.
+    """
     
     I.verbose=verbose
     if settings:
@@ -163,6 +214,23 @@ def update_impact(I,settings=None,
     return I
 
 def update_distgen(G,settings=None,verbose=False):
+    """
+    Update a Distgen Generator object with new settings.
+
+    Parameters
+    ----------
+    G : Generator
+        Distgen Generator object to update.
+    settings : dict, optional
+        Dictionary of settings to apply. Keys starting with 'distgen:' are applied to Distgen.
+    verbose : bool, optional
+        If True, print each setting as it is applied.
+
+    Returns
+    -------
+    Generator
+        The updated Distgen Generator object.
+    """
     G.verbose=verbose
     if settings:
         for key in settings:

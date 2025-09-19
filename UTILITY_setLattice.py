@@ -11,6 +11,28 @@ def setLattice(
     verbose = False,
     **overrides
 ):
+    """
+    Configure the accelerator lattice by setting all relevant element strengths and parameters.
+
+    This is the all-in-one function for making changes to the lattice, ensuring a single location for default values and overrides.
+    Loads default settings from a YAML file, applies any overrides, and sets all linac, quad, bend, sextupole, kicker, and XTCAV parameters accordingly.
+
+    Parameters
+    ----------
+    tao : Tao
+        Active Tao simulation object.
+    defaultsFile : str, optional
+        Path to the YAML file containing default lattice settings. 
+    verbose : bool, default False
+        If True, prints information about the defaults file used.
+    **overrides : dict
+        Keyword arguments to override any default lattice settings.
+
+    Returns
+    -------
+    None
+
+    """
 
     if not defaultsFile:
         defaultsFile = f'{tao.filePathGlobal}/setLattice_configs/defaults.yml'
@@ -139,6 +161,36 @@ def setLattice(
     return
 
 def setLinacsHelper(tao, L0BPhaseSet, L0BEnergyOffset, L1PhaseSet, L1EnergyOffset, L2PhaseSet, L2EnergyOffset, L3PhaseSet, L3EnergyOffset):
+    """
+    Helper function to set linac phases and gradients for all major linac sections.
+
+    Parameters
+    ----------
+    tao : Tao
+        Active Tao simulation object.
+    L0BPhaseSet : float
+        Phase setting for L0B (degrees).
+    L0BEnergyOffset : float
+        Energy offset for L0B (eV).
+    L1PhaseSet : float
+        Phase setting for L1 (degrees).
+    L1EnergyOffset : float
+        Energy offset for L1 (eV).
+    L2PhaseSet : float
+        Phase setting for L2 (degrees).
+    L2EnergyOffset : float
+        Energy offset for L2 (eV).
+    L3PhaseSet : float
+        Phase setting for L3 (degrees).
+    L3EnergyOffset : float
+        Energy offset for L3 (eV).
+
+    Returns
+    -------
+    None
+
+
+    """
     [L1MatchStrings, L2MatchStrings, L3MatchStrings, selectMarkers] = getLinacMatchStrings(tao)
     
     # === Make changes to base lattice ===
