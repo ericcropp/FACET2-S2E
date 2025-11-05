@@ -1181,13 +1181,14 @@ def saveAllQPADFigures(sim_fold = '',
     files = [f for f in os.listdir(fold) if os.path.isfile(os.path.join(fold, f))]
 
     os.makedirs(save_fold, exist_ok=True)
-    
+    plt.ioff()
     for ndump in range(len(files)):
         plt.clf()
         fig = plotQPAD(sim_fold, ndump, quants, plot_type, xlims, ylims, vlims, angle, ncols, figsize, cmaps)
         filename = f"{ndump:06d}.png"
         filepath = os.path.join(save_fold, filename)
         fig.savefig(filepath, format = 'png', dpi = 300)
+        plt.close(fig)
     print('Saving all QPAD Figures to ' + save_fold)
     proc = subprocess.Popen(
         ['ffmpeg', "-framerate", str(2), "-y", "-i", "%06d.png", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2", "output.mp4"],

@@ -27,6 +27,7 @@ This repository contains utilities, Jupyter notebooks, and configuration files u
 
    To install and run with QPAD:
    ```bash
+   conda install conda-build
    ./qpad/build_pkg/build_qpad.sh
    conda env create -f bmadQPADCondaEnv.yml
    conda activate bmad-qpad
@@ -44,7 +45,7 @@ The notebooks in the repository demonstrate typical workflows:
 * **`Example - Beam visualization.nb`** – Mathematica notebook for advanced beam visualization and analysis, including 3D animation generation
 * **`Example - Optimization progress dashboard.nb`** – Mathematica companion notebook which visualizes optimization progress, e.g. parameter sensitivities and convergence
 * **`Example - Jitter study.py`** – Parallel computation of many simulations with parameters subject to jitter, informed by real-world measurements
-* **`Example - QPAD jitter simulation.py`** – performs a single S2E jitter simulation using QPAD to model PWFA in a Lithium Oven plasma source (starting at PENT+25 cm).
+* **`Example - QPAD jitter simulation.py`** – performs a single S2E jitter simulation using QPAD to model plasma wakefield acceleration in a Lithium Oven plasma source (located at PENT+25 cm).
 
 ### Tests
 
