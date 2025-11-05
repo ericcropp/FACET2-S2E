@@ -1,0 +1,23 @@
+name: bmad-qpad
+
+channels:
+  - conda-forge
+  - local
+
+dependencies:
+  - jupyter
+  - numpy
+  - matplotlib
+  - pandas
+  - bmad=20250811.0
+  - pytao=0.5.3
+  - openpmd-beamphysics=0.10.1
+  - distgen=2.1.7
+  - lume-base=0.3.3
+  - lume-impact=0.9.7
+  - bayesian-optimization
+  - picmistandard
+  - periodictable
+  - openpmd-viewer=1.10
+  - openmpi
+  - qpad

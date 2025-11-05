@@ -25,6 +25,13 @@ This repository contains utilities, Jupyter notebooks, and configuration files u
    conda install -c conda-forge bmad pytao openpmd-beamphysics distgen lume-base lume-impact bayesian-optimization
    ```
 
+   To install and run with QPAD:
+   ```bash
+   ./qpad/build_pkg/build_qpad.sh
+   conda env create -f bmadQPADCondaEnv.yml
+   conda activate bmad-qpad
+   ```
+
 ## Examples
 
 The notebooks in the repository demonstrate typical workflows:
@@ -37,7 +44,7 @@ The notebooks in the repository demonstrate typical workflows:
 * **`Example - Beam visualization.nb`** – Mathematica notebook for advanced beam visualization and analysis, including 3D animation generation
 * **`Example - Optimization progress dashboard.nb`** – Mathematica companion notebook which visualizes optimization progress, e.g. parameter sensitivities and convergence
 * **`Example - Jitter study.py`** – Parallel computation of many simulations with parameters subject to jitter, informed by real-world measurements
-* 
+* **`Example - QPAD jitter simulation.py`** – performs a single S2E jitter simulation using QPAD to model PWFA in a Lithium Oven plasma source (starting at PENT+25 cm).
 
 ### Tests
 
@@ -49,11 +56,13 @@ When run, "Example" notebooks should reproduce the figures and results of the no
 ARCHIVE/                 Historical studies, optimizations, and experimental notebooks
 beams/                   Reference beams and scripts to generate them
 bmad/                    Bmad 'golden lattice' (https://github.com/slaclab/facet2-lattice)
+qpad/                    QPAD configuration files
 impact/                  IMPACT‑T configuration files
 other_configs/           Atypical configurations including misalignment and steering solutions
 setLattice_configs/      Reference configurations
 UTILITY_*.py             Utility functions
-bmadCondaEnv.yml         Conda environment specification
+bmadCondaEnv.yml         Conda environment specification for Bmad and Impact-T
+bmadQPADCondaEnv.yml     Conda environment specification for Bmad, Impact-T, and QPAD
 ```
 
 
