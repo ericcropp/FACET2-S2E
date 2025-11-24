@@ -504,7 +504,7 @@ def floorplanPlot(
     
     floorplan=pd.read_csv(
         io.StringIO('\n'.join(tao.show('lat -all -floor_coords -tracking_elements')[3:-5])), 
-        sep="[\s\n]+",
+        sep=r"[\s\n]+",
         engine='python',
         names=['Index','ElementName','ElementType','s','ds','X','Y','Z','Theta','Phi','Psi'])
     floorplan.drop(0,inplace=True)

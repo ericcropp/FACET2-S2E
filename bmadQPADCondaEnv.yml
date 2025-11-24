@@ -5,6 +5,7 @@ channels:
   - local
 
 dependencies:
+  - python=3.13
   - jupyter
   - numpy
   - matplotlib
@@ -14,10 +15,16 @@ dependencies:
   - openpmd-beamphysics=0.10.1
   - distgen=2.1.7
   - lume-base=0.3.3
-  - lume-impact=0.9.7
+  - lume-impact=0.10.1
   - bayesian-optimization
+  - ca-certificates
+  - openssl
+  - xopt
+  - certifi
+  - git-lfs
   - picmistandard
   - periodictable
   - openpmd-viewer=1.10
   - openmpi
   - qpad
+prefix: /sdf/group/ad/beamphysics/cropp/conda/bmadCondaEnv

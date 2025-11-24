@@ -11,21 +11,19 @@ This repository contains utilities, Jupyter notebooks, and configuration files u
    git clone https://github.com/slaclab/FACET2-S2E.git
    cd FACET2-S2E
    git lfs pull
+   git submodule init 
+   git submodule update
    ```
    Many beam files are tracked with Git LFS.  Without LFS the notebooks will fail to load example beams.
 
 2. **Create the conda environment**
+   Basic install:
    ```bash
    conda env create -f bmadCondaEnv.yml
    conda activate bmad
    ```
-   Alternatively, directly install key packages:
-   ```bash
-   conda install jupyter numpy matplotlib pandas
-   conda install -c conda-forge bmad pytao openpmd-beamphysics distgen lume-base lume-impact bayesian-optimization
-   ```
 
-   To install and run with QPAD:
+   Install with QPAD:
    ```bash
    conda install conda-build
    ./qpad/build_pkg/build_qpad.sh
