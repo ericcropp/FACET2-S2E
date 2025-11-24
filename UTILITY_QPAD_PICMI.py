@@ -201,7 +201,6 @@ class Species(picmistandard.PICMI_Species):
 
 
 	def normalize_units(self):
-		print('normalizing', self.charge)
 		# normalized charge, mass, density
 		self.q = self.charge/constants.q_e
 		self.m = self.mass/constants.m_e
@@ -414,8 +413,8 @@ class UniformDistribution(picmistandard.PICMI_UniformDistribution):
 		for i in range(3):
 			self.rms_velocity[i] /= constants.c 
 
-		if(np.any(self.directed_velocity != 0.0)):
-			print('Warning: ' + codename + ' does not support directed velocity for Analytic Distributions.')
+		# if(np.any(self.directed_velocity != 0.0)):
+		# 	print('Warning: ' + codename + ' does not support directed velocity for Analytic Distributions.')
 
 	def fill_dict(self,keyvals):
 		back_str,front_str = construct_bounds(self.lower_bound,self.upper_bound)
@@ -479,8 +478,8 @@ class PiecewiseDistribution(picmistandard.base._ClassWithInit):
 		for i in range(3):
 			self.rms_velocity[i] /= constants.c 
 
-		if(np.any(self.directed_velocity != 0.0)):
-			print('Warning: ' + codename + ' does not support directed velocity for Analytic Distributions.')
+		# if(np.any(self.directed_velocity != 0.0)):
+		# 	print('Warning: ' + codename + ' does not support directed velocity for Analytic Distributions.')
 
 
 	def fill_dict(self,keyvals):
@@ -509,9 +508,7 @@ class AnalyticDistribution(picmistandard.PICMI_AnalyticDistribution):
 	def init(self,kw):
 		# default profile for uniform plasmas
 		self.profile = ['analytic', 'analytic']
-		if(np.any(self.momentum_expressions == None)):
-			print('Warning: QPAD does not support momentum expressions for Analytic Distributions.')
-
+		
 
 	def normalize_units(self,species, density_norm):
 
@@ -532,8 +529,8 @@ class AnalyticDistribution(picmistandard.PICMI_AnalyticDistribution):
 		for i in range(3):
 			self.rms_velocity[i] /= constants.c 
 
-		if(np.any(self.directed_velocity != 0.0)):
-			print('Warning: ' + codename + ' does not support directed velocity for Analytic Distributions.')
+		# if(np.any(self.directed_velocity != 0.0)):
+		# 	print('Warning: ' + codename + ' does not support directed velocity for Analytic Distributions.')
 
 
 	def fill_dict(self,keyvals):
@@ -982,7 +979,7 @@ class FieldDiagnostic(picmistandard.PICMI_FieldDiagnostic):
 		if('B' in self.data_list):
 			self.field_list += ['br_cyl_m','bphi_cyl_m','bz_cyl_m']
 		if('rho' in self.data_list):
-			self.source_list += ['charge_cyl_m']
+			self.source_list += ['charge_cyl_m', 'ion_cyl_m']
 		if('J' in self.data_list):
 			self.source_list += ['jr_cyl_m','jphi_cyl_m','jz_cyl_m']
 
@@ -1045,10 +1042,9 @@ class ParticleDiagnostic(picmistandard.PICMI_ParticleDiagnostic):
 		Dumps every nth particle.
 	"""
 	def init(self,kw):
-		print(kw)
 		assert self.write_dir != '.', Exception("Write directory feature not yet supported.")
 		assert self.period > 0, Exception("Diagnostic period is not valid")
-		print('Warning: Particle diagnostic reporting momentum, position and charge data')
+		# print('Warning: Particle diagnostic reporting momentum, position and charge data')
 		self.sample = kw.pop(codename + '_sample', 1) 
 
 	def fill_dict_fld(self,keyvals):
