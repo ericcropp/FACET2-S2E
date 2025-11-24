@@ -14,6 +14,40 @@ def modifyAndSaveInputBeam(
     timeCenterTF = True,
     outputBeamFilePath = None
 ):
+    """
+    Modify and save a particle beam file with optional downsampling, time centering, and Twiss parameter matching.
+
+    Parameters
+    ----------
+    inputBeamFilePath : str
+        Path to the input beam file (HDF5 format) to be loaded as a ParticleGroup.
+    betaX : float, optional
+        Target beta function in the x-plane for Twiss matching. If None, no matching is performed.
+    alphaX : float, optional
+        Target alpha function in the x-plane for Twiss matching. If None, no matching is performed.
+    betaY : float, optional
+        Target beta function in the y-plane for Twiss matching. If None, no matching is performed.
+    alphaY : float, optional
+        Target alpha function in the y-plane for Twiss matching. If None, no matching is performed.
+    numMacroParticles : int, optional
+        If specified, randomly downsample the beam to this number of macroparticles, rescaling weights accordingly.
+    timeCenterTF : bool, default True
+        If True, center the time coordinate of the beam (subtract mean t from all particles).
+    outputBeamFilePath : str, optional
+        Path to save the modified beam file. If None, saves to './beams/activeBeamFile.h5' in the current working directory.
+
+    Returns
+    -------
+    ParticleGroup
+        The modified ParticleGroup object.
+
+    Notes
+    -----
+    - Downsampling is performed by random selection and weight rescaling, preserving the distinction between driver/witness if present.
+    - Time centering assumes all particle weights are equal or nearly equal.
+    - Twiss matching is applied independently to x and y planes if the corresponding parameters are provided.
+    - The function writes the modified beam to disk and also returns the ParticleGroup object for further use.
+    """
 
     #Import
     P = ParticleGroup(inputBeamFilePath)
@@ -61,4 +95,4 @@ def modifyAndSaveInputBeam(
 
 
 
-    
+

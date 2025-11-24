@@ -1,9 +1,7 @@
 name: bmadCondaEnv
 channels:
   - conda-forge
-  - defaults
 dependencies:
-  - python=3.13
   - jupyter
   - numpy
   - matplotlib
@@ -15,9 +13,3 @@ dependencies:
   - lume-base=0.3.3
   - lume-impact=0.10.1
   - bayesian-optimization
-  - ca-certificates
-  - openssl
-  - xopt
-  - certifi
-  - git-lfs
-prefix: /sdf/group/ad/beamphysics/cropp/conda/bmadCondaEnv

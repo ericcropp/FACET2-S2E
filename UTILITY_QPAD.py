@@ -418,14 +418,14 @@ class QPAD_sim:
 	[z array, Lithium density array, Helium density array]
 
 	Args:
-	    Nz: Number of positions in z.
-	    Z: [m] Maximum z position to generate, inclusive.
-	    P: [torr] Buffer gas pressure.
-	    T_bkgd: [K] Temperature of the background He buffer gas.
-	    l_He: [m] Length of He density to use from thermodynamics calulation. Interpolation
-	        is used outside of this region.
-	    filename_Li: Filename to output the Li density to.
-	    filename_He: Filename to output the He density to.
+		Nz: Number of positions in z.
+		Z: [m] Maximum z position to generate, inclusive.
+		P: [torr] Buffer gas pressure.
+		T_bkgd: [K] Temperature of the background He buffer gas.
+		l_He: [m] Length of He density to use from thermodynamics calulation. Interpolation
+			is used outside of this region.
+		filename_Li: Filename to output the Li density to.
+		filename_He: Filename to output the He density to.
 	"""
 	def generate_Li_oven_profile(self, Nz = 1001, Z = 0.6, P = 5.0, T_bkgd = 273.15, l_He = 0.44 ):
 
@@ -438,20 +438,20 @@ class QPAD_sim:
 
 		# Lithium properties
 		def Pv(T):
-		    """Calculates the vapor pressure of the lithium gas as a function of temperature.
+			"""Calculates the vapor pressure of the lithium gas as a function of temperature.
 
-		    Args:
-		        T: [K] temperature of the lithium gas.
+			Args:
+				T: [K] temperature of the lithium gas.
 
-		    Returns:
-		        Pv: [torr] vapor pressure of the lithium.
-		    """
-		    T = T * 1e-3
-		    return np.exp(-2.0532 * np.log(T) - 19.4268 / T + 9.4993 + 0.753 * T) / 133.0e-6
+			Returns:
+				Pv: [torr] vapor pressure of the lithium.
+			"""
+			T = T * 1e-3
+			return np.exp(-2.0532 * np.log(T) - 19.4268 / T + 9.4993 + 0.753 * T) / 133.0e-6
 
 
 		def f(T):
-		    return Pv(T) - P
+			return Pv(T) - P
 
 
 		T = fsolve(f, 1000.0)[0]

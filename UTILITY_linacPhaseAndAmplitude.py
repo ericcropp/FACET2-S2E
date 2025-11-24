@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 # L1MatchStrings = []
 # L2MatchStrings = []
@@ -6,7 +7,19 @@ import numpy as np
 # selectMarkers = []
 
 def getLinacMatchStrings(tao):
-    """Determine the strings required to match Bmad cavity elements"""
+    """
+    Determine the strings required to match Bmad cavity elements
+    
+    Parameters
+    ----------
+    tao : Tao object
+        Active Tao simulation object.
+
+    Returns
+    -------
+    list
+        [L1MatchStrings, L2MatchStrings, L3MatchStrings, selectMarkers] as numpy arrays of element names.
+    """
     
     global L1MatchStrings, L2MatchStrings, L3MatchStrings, selectMarkers
     
@@ -31,9 +44,24 @@ def getLinacMatchStrings(tao):
     return [L1MatchStrings, L2MatchStrings, L3MatchStrings, selectMarkers]
 
 def getEnergyChangeFromElements(tao, activeMatchStrings):
-    """Calculate the energy change imparted by selected elements
+    """
+    Calculate the energy change imparted by selected elements
     
     activeMatchStrings may be a string of a common name ("L1", "L2", or "L3") or an actual list of strings to match
+
+    
+    Parameters
+    ----------
+    tao : Tao object
+        Active Tao simulation object.
+    activeMatchStrings : str or list
+        String (e.g. 'L1', 'L2', 'L3') or list of element names to match.
+
+    Returns
+    -------
+    float
+        Net energy change (eV).
+
     """
     
     activeMatchStrings = matchStringWrapper(tao, activeMatchStrings)
@@ -50,9 +78,20 @@ def getEnergyChangeFromElements(tao, activeMatchStrings):
 
 
 def setLinacGradientAuto(tao, activeMatchStrings, targetVoltage): 
-    """Set all elements to a constant gradient required to achieve target voltage change
+    """
+    Set all elements to a constant gradient required to achieve target voltage change
 
     activeMatchStrings may be a string of a common name ("L1", "L2", or "L3") or an actual list of strings to match    
+    
+
+    Parameters
+    ----------
+    tao : Tao object
+        Active Tao simulation object.
+    activeMatchStrings : str or list
+        String (e.g. 'L1', 'L2', 'L3') or list of element names to match.
+    targetVoltage : float
+        Desired total voltage gain.
     """
     
     activeMatchStrings = matchStringWrapper(tao, activeMatchStrings)
@@ -77,6 +116,15 @@ def setLinacPhase(tao, activeMatchStrings, phi0Deg):
     """Set all elements to a phase
 
     activeMatchStrings may be a string of a common name ("L1", "L2", or "L3") or an actual list of strings to match
+
+    Parameters
+    ----------
+    tao : Tao object
+        Active Tao simulation object.
+    activeMatchStrings : str or list
+        String (e.g. 'L1', 'L2', 'L3') or list of element names to match.
+    phi0Deg : float
+        Phase to set, in degrees.
     """
     
     activeMatchStrings = matchStringWrapper(tao, activeMatchStrings)
@@ -85,11 +133,24 @@ def setLinacPhase(tao, activeMatchStrings, phi0Deg):
 
 
 def matchStringWrapper(tao, activeMatchStrings):
-    """Translate common names ("L1", "L2", or "L3") into relevant match strings
+    """
+    Translate common names ("L1", "L2", or "L3") into relevant match strings
     This is just to make life a little simpler for people.
     Usually activeMatchStrings should be an array
     However, if it's a string that's a common name ("L1", "L2", or "L3"), return the relevant match strings
     Otherwise just spit out whatever was provided
+
+    Parameters
+    ----------
+    tao : Tao object
+        Active Tao simulation object.
+    activeMatchStrings : str or array-like
+        String ('L1', 'L2', 'L3') or array of element names.
+
+    Returns
+    -------
+    array-like
+        Array of element names to match.
     """
     if isinstance(activeMatchStrings, str):
         [L1MatchStrings, L2MatchStrings, L3MatchStrings, selectMarkers] = getLinacMatchStrings(tao)
@@ -115,6 +176,24 @@ def matchStringWrapper(tao, activeMatchStrings):
 #    [print(row) for row in printThing];
 
 def printArbValues(tao, activeElements, attString):
+    """
+    Print the values of a specified attribute for a list of elements.
+
+    Parameters
+    ----------
+    tao : Tao object
+        Active Tao simulation object.
+    activeElements : array-like
+        List or array of element names. If a numpy array, will be converted to list for compatibility.
+    attString : str
+        Attribute name to print (e.g. 'GRADIENT', 'PHI0').
+
+    Notes
+    -----
+    This function retrieves the names and the specified attribute values for each element in `activeElements` using Tao's `lat_list` method.
+    The attribute values are divided by 1e9 for unit normalization (e.g., to convert from eV to GeV if the attribute is voltage-related).
+    The results are combined into a 2D array (`printThing`) with element names and their corresponding attribute values.
+    """
     #The .tolist() is because of issues when activeElements is a numpy array
     namesList = [ tao.lat_list(i, "ele.name", flags="-no_slaves -array_out") for i in activeElements.tolist() ]
     namesList = np.concatenate(namesList)
@@ -122,4 +201,4 @@ def printArbValues(tao, activeElements, attString):
     valuesList = np.concatenate(valuesList) / 1e9
     
     printThing = np.transpose([namesList, valuesList])
-    display(pd.DataFrame(printThing))
+    print(pd.DataFrame(printThing))

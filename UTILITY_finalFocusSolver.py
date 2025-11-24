@@ -3,6 +3,29 @@ import numpy as np
 from UTILITY_setLattice import setLattice, getBendkG, getQuadkG, getSextkG, setBendkG, setQuadkG, setSextkG, setXOffset, setYOffset
 
 def finalFocusSolverObjective(params, tao, ele, s_offset, targetBetaX, targetAlphaX, targetBetaY, targetAlphaY):
+    """
+    Objective function for final focus quadrupole optimization.
+    Sets the strengths of the final focus quadrupoles, computes the Twiss parameters at a specified location,
+    and returns the squared error from the target Twiss values, plus a small penalty for deviation from the design lattice.
+
+    Parameters
+    ----------
+    params : list or array-like
+        Quadrupole strengths [Q5FFkG, Q4FFkG, Q3FFkG, Q2FFkG, Q1FFkG, Q0FFkG].
+    tao : Tao object
+        Active Tao simulation object.
+    ele : str
+        Name of the element where Twiss parameters are evaluated.
+    s_offset : float
+        Offset from the element for Twiss calculation.
+    targetBetaX, targetAlphaX, targetBetaY, targetAlphaY : float
+        Target Twiss parameters to match.
+
+    Returns
+    -------
+    float
+        Objective function value (sum of squared errors plus penalty).
+    """
     Q5FFkG, Q4FFkG, Q3FFkG, Q2FFkG, Q1FFkG, Q0FFkG  = params
     
     try:

@@ -4,7 +4,11 @@ import multiprocessing
 import os
 import json
 
-from UTILITY_quickstart import *
+# from UTILITY_quickstart import *
+import UTILITY_quickstart as qs
+import numpy as np
+# import matplotlib.pyplot as plt
+# from pmd_beamphysics import ParticleGroup
 
 
 
@@ -29,8 +33,23 @@ def jitterLinac(
     """Applies phase and amplitude errors to L0B, L1, L2, and L3
     
     Defaults values from https://docs.google.com/spreadsheets/d/1xeCUImz5uFSq6QA3wV91dG38s-8cyVXQMGw9hjPKa6M/edit?gid=0#gid=0
-    """
 
+    Parameters
+    ----------
+    tao : Tao
+        Tao simulation object.
+    L0BMatchStrings, L1MatchStrings, L2MatchStrings, L3MatchStrings : list of str
+        Lists of element names for each linac section to which errors will be applied.
+    L0BPhaseErrorDeg, L1PhaseErrorDeg, L2PhaseErrorDeg, L3PhaseErrorDeg : float
+        Standard deviation of phase jitter (in degrees) for each linac section.
+    L0BGradientErrorPercent, L1GradientErrorPercent, L2GradientErrorPercent, L3GradientErrorPercent : float
+        Standard deviation of gradient jitter (in percent) for each linac section.
+
+    Returns
+    -------
+    dict
+        Dictionary of the actual phase and gradient errors applied to each section.
+    """
 
 
     #Apply same errors to all elements in the linac region
@@ -95,22 +114,48 @@ def jitterLinac(
 
     
 def hashDict(d):
+    """
+    Generate a hash string from a dictionary for use in filenames or unique identification.
+
+    Parameters
+    ----------
+    d : dict
+        Dictionary to hash.
+
+    Returns
+    -------
+    str
+        String representation of the hash value.
+    """
     return str(abs(hash(json.dumps(d, sort_keys=True))))
 
 
 
     
 def worker(config):
+    """
+    Worker function for multiprocessing jitter study. Sets up a Tao simulation, applies jitter,
+    tracks the beam, collects results, and saves output files for a single jitter realization.
+
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary for this worker (unused in this demo, but can be used for parameter sweeps).
+
+    Returns
+    -------
+    None
+        Results are saved to disk; nothing is returned.
+    """
 
 
     csrTF = True
     transverseWakes = False
 
-    importedDefaultSettings = loadConfig("setLattice_configs/2024-10-22_oneBunch_baseline3.yml")
+    importedDefaultSettings = qs.loadConfig("setLattice_configs/2024-10-22_oneBunch_baseline3.yml")
 
 
-    
-    tao = initializeTao(
+    tao = qs.initializeTao(
         inputBeamFilePathSuffix = importedDefaultSettings["inputBeamFilePathSuffix"],
         csrTF = csrTF,
         numMacroParticles=1e4,
@@ -124,13 +169,13 @@ def worker(config):
 
     
     # Set up lattice
-    setLattice(tao, **importedDefaultSettings)
+    qs.setLattice(tao, **importedDefaultSettings)
 
-    L1MatchStrings, L2MatchStrings, L3MatchStrings, selectMarkers = getLinacMatchStrings(tao)
+    L1MatchStrings, L2MatchStrings, L3MatchStrings, selectMarkers = qs.getLinacMatchStrings(tao)
     L0BMatchStrings = ["L0BF"]
 
     #Since we're jittering, we don't want Bmad to auto-compensate the magnets
-    disableAutoMagnetEnergyCompensation(tao)
+    qs.disableAutoMagnetEnergyCompensation(tao)
 
 
     
@@ -153,16 +198,16 @@ def worker(config):
     
     try:
         #Track
-        trackBeam(tao, **importedDefaultSettings)
-        P = getBeamAtElement(tao, "PENT")
+        qs.trackBeam(tao, **importedDefaultSettings)
+        P = qs.getBeamAtElement(tao, "PENT")
 
         #Figure of LPS at PENT
-        fig = plotMod(P, 'z', 'pz', bins=300, xlim = (-200e-6, 100e-6), ylim = (9.6e9, 10.2e9))
+        fig = qs.plotMod(P, 'z', 'pz', bins=300, xlim = (-200e-6, 100e-6), ylim = (9.6e9, 10.2e9))
 
 
         #Collect useful information like jitterDict into exportDict
         exportDict = config | {"csrTF":csrTF, "transverseWakes":transverseWakes} | jitterDict 
-        exportDict = exportDict | getBeamSpecs(P) 
+        exportDict = exportDict | qs.getBeamSpecs(P) 
         
 
         #Specify the output path
