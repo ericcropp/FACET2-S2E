@@ -19,7 +19,111 @@ from matplotlib.ticker import FuncFormatter
 import glob
 import json
 
-cst = picmi.constants
+	""" 
+	Generates the plasma density of the lithium oven/helium as a function of z position.
+
+	The position and density at each position is returned as output in the following order:
+
+	[z array, Lithium density array, Helium density array]
+
+	Args:
+		Nz: Number of positions in z.
+		Z: [m] Maximum z position to generate, inclusive.
+		P: [torr] Buffer gas pressure.
+		T_bkgd: [K] Temperature of the background He buffer gas.
+		l_He: [m] Length of He density to use from thermodynamics calulation. Interpolation
+			is used outside of this region.
+		filename_Li: Filename to output the Li density to.
+		filename_He: Filename to output the He density to.
+	"""
+	def generate_Li_oven_profile(self, Nz = 1001, Z = 0.6, P = 5.0, T_bkgd = 273.15, l_He = 0.44 ):
+
+		# Calculation variables
+		z = np.linspace(0.0, Z, Nz)
+		n = np.zeros(Nz, dtype="double")
+		center = Z / 2
+		kB = physical_constants["Boltzmann constant"][0]
+
+
+		# Lithium properties
+		def Pv(T):
+			"""Calculates the vapor pressure of the lithium gas as a function of temperature.
+
+			Args:
+				T: [K] temperature of the lithium gas.
+
+			Returns:
+				Pv: [torr] vapor pressure of the lithium.
+			"""
+			T = T * 1e-3
+			return np.exp(-2.0532 * np.log(T) - 19.4268 / T + 9.4993 + 0.753 * T) / 133.0e-6
+
+
+		def f(T):
+			return Pv(T) - P
+
+
+		T = fsolve(f, 1000.0)[0]
+		ne = 9.66e24 * P / T
+
+		# Background lithium density - necessary for find He density
+		Pv_bkgd = Pv(T_bkgd)
+		n_bkgd = 9.66e24 * Pv_bkgd / T_bkgd
+
+		# Uniform accelerating plasma
+		length = 238e-3
+		z_start = center - 0.5 * length
+		z_end = center + 0.5 * length
+		sel = (z > z_start) * (z < z_end)
+		n[sel] = 1.0
+
+		# Entrance ramp - error function
+		ent_start = center - 400.0e-3
+		s_ent = 22.0e-3
+		sel = (z >= ent_start) * (z <= z_start)
+		n[sel] = 0.5 * (1 + erf((z[sel] - z_start + 100.0e-3) / (np.sqrt(2) * s_ent)))
+		n[sel] *= 1.0 / n[sel][-1]  # Make sure curve is continuous
+
+		# Exit ramp - error function
+		exit_end = center + 400.0e-3
+		s_ext = 22.0e-3
+		sel = (z >= z_end) * (z <= exit_end)
+		n[sel] = 0.5 * (1 + erf(-(z[sel] - z_end - 100.0e-3) / (np.sqrt(2) * s_ext)))
+		n[sel] *= 1.0 / n[sel][0]  # Make sure curve is continuous
+
+		n *= ne
+		n += n_bkgd
+
+		# Save the Li plasma density file
+		data = np.stack((z, n), axis=1)
+
+		# Calculate He plasma density
+		# First create interpolations to go from density to temperature and Li pressure
+		T_int = np.linspace(200, 1200, 1001)
+		P_int = Pv(T_int)
+		n_int = 9.66e24 * P_int / T_int
+		T_from_n = interp1d(n_int, T_int)
+		P_from_n = interp1d(n_int, P_int)
+
+		# Find the temperature and Li pressure along the oven, then calculate He density
+		T_n = T_from_n(n)
+		P_n = P_from_n(n)
+		n_He = ((P - P_n) * 133.32236842) / (kB * T_n)
+		n_He_bkgd = ((P) * 133.32236842) / (kB * T_bkgd)
+
+		# Above meathod breaks down at low Li pressure, use linear interpolation from the ramps
+		z_HeStart = center - 0.5 * l_He
+		z_HeEnd = center + 0.5 * l_He
+		nHe = np.zeros(Nz)
+		sel = (z > z_HeStart) * (z < z_HeEnd)
+		nHe[sel] = n_He[sel]
+
+		# Extend linearly from the ends
+		slope = (nHe[sel][10] - nHe[sel][0]) / (z[sel][10] - z[sel][0])
+		selUp = z <= z_HeStart
+		nHe[selUp] = slope * (z[selUp] - z[sel][0]) + nHe[sel][0]
+		selDown = z >= z_HeEnd
+		nHe[selDown] = -slope * (z[selDown] - z[sel][-1]) + nHe[sel][-1]
 
 
 class QPAD_sim:

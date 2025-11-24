@@ -26,7 +26,8 @@ from UTILITY_linacPhaseAndAmplitude import getLinacMatchStrings, setLinacPhase, 
 from UTILITY_modifyAndSaveInputBeam import modifyAndSaveInputBeam
 from UTILITY_setLattice import setLattice, getBendkG, getQuadkG, getSextkG, setBendkG, setQuadkG, setSextkG, setXOffset, setYOffset, setKickerkG, getKickerkG, setBendGeVc, getBendGeVc
 from UTILITY_impact import runImpact
-from UTILITY_OpenPMDtoBmad import OpenPMD_to_Bmad
+# from UTILITY_OpenPMDtoBmad import OpenPMD_to_Bmad
+import OpenPMD_to_Bmad.Update_h5_file as pmd2bmad
 from UTILITY_finalFocusSolver import finalFocusSolver
 from UTILITY_QPAD import QPAD_sim, run_QPAD
 
@@ -616,7 +617,7 @@ def writeBeam(P, fileName):
     """ Writes the beam as an h5 with E. Cropp's timeOffset fix """
     P.write(fileName)
     
-    OpenPMD_to_Bmad(fileName)
+    pmd2bmad.OpenPMD_to_Bmad(fileName)
 
 def makeBeamActiveBeamFile(P, tao = None):
 
