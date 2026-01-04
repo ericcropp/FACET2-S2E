@@ -10,6 +10,7 @@ import yaml
 
 import impact
 import os
+import sys
 
 def runImpact(
     filePath = None,
@@ -61,7 +62,9 @@ def runImpact(
         filePath = os.getcwd()
         print(f"Assuming default file path: {filePath}")
 
-
+    python_path = sys.executable
+    bin_path = os.path.dirname(python_path)
+    
 
     impactFolderPath = filePath+"/impact/"
     GFILE = impactFolderPath+GFILESuffix # Distgen input file
@@ -93,7 +96,7 @@ def runImpact(
         'SOL10111:solenoid_field_scale':-0.41/sim_sol_conv,
         #'PR10241:sample_frequency':1,
         #'workdir':os.path.expandvars('~/'),
-        #'command': '/opt/homebrew/anaconda3/envs/bmadclone/bin/ImpactTexe',    
+        'command': bin_path + '/ImpactTexe',  
         #'command_mpi': '/sdf/home/c/cropp/conda/envs/xopt/bin/ImpactTexe-mpi',
         # 'mpi_run':'salloc --partition milano --account ad:ard-online -N 1 -n {nproc} /usr/lib64/openmpi/bin/mpirun -n {nproc} {command_mpi}'
         #'mpi_run':'/usr/lib64/openmpi/bin/mpirun --oversubscribe -n {nproc} {command_mpi}'

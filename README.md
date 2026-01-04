@@ -30,6 +30,11 @@ This repository contains utilities, Jupyter notebooks, and configuration files u
    conda env create -f bmadQPADCondaEnv.yml
    conda activate bmad-qpad
    ```
+3. **Register the environment (Jupyter)**
+   ```bash
+   python -m ipykernel install --user --name <environment_name (bmad OR bmad-qpad)> --display-name "<environment_name (bmad OR bmad-qpad)>"
+   ```
+
 
 ## Examples
 

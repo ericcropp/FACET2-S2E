@@ -1,3 +1,3 @@
 [submodule "OpenPMD_to_Bmad"]
 	path = OpenPMD_to_Bmad
-	url = git@github.com:ericcropp/OpenPMD_to_Bmad.git
+	url = https://github.com/ericcropp/OpenPMD_to_Bmad.git
