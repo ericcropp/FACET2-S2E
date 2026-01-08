@@ -505,9 +505,8 @@ class QPAD_sim:
         if('CONDA_PREFIX' in env):
             env['PATH'] =env['CONDA_PREFIX'] + '/bin:'  + env['PATH']
         procs = np.prod(nodes)
-        # subprocess.run(['mpirun', "-np", str(procs), "qpad.e"], cwd = sim_dir, env=env)
         proc = subprocess.Popen(
-            ['mpirun', "-np", str(procs), "qpad.e"],
+            ['mpirun', "-np", str(procs), "qpad-pmd.e"],
             stdout=subprocess.PIPE,
             text=True,
             cwd = sim_dir, 

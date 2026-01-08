@@ -2,7 +2,6 @@ name: bmad-qpad
 
 channels:
   - conda-forge
-  - local
 
 dependencies:
   - python=3.13
@@ -26,5 +25,5 @@ dependencies:
   - periodictable
   - openpmd-viewer=1.10
   - openmpi
-  - qpad
+  - qpad=1.6.3=*_1
 prefix: /sdf/group/ad/beamphysics/cropp/conda/bmadCondaEnv
