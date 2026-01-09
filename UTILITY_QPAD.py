@@ -519,7 +519,7 @@ class QPAD_sim:
                 cmd = ["mpirun", "-np", str(procs), "qpad-pmd.e"]
 
         proc = subprocess.Popen(
-            ['mpirun', "-np", str(procs), "qpad-pmd.e"],
+            cmd,
             stdout=subprocess.PIPE,
             text=True,
             cwd = sim_dir, 
