@@ -504,7 +504,20 @@ class QPAD_sim:
         env = dict(os.environ)
         if('CONDA_PREFIX' in env):
             env['PATH'] =env['CONDA_PREFIX'] + '/bin:'  + env['PATH']
+        else:
+            env['PATH' ] = os.path.dirname(sys.executable) + ":" + env['PATH']
+
         procs = np.prod(nodes)
+        using_slurm = bool(os.environ.get("SLURM_JOB_ID"))
+        if using_slurm:
+            print('Detected Slurm...')
+            slurm_ntasks = int(os.environ.get("SLURM_NTASKS",str(procs)))
+            if(slurm_ntasks < procs):
+                print(f"Warning: MPI procs={procs} are oversubcribed above SLURM_NTASKS={slurm_ntasks} set by environment...")
+                cmd = ["mpirun", "--oversubscribe", "-np", str(procs), "qpad-pmd.e"]
+            else:
+                cmd = ["mpirun", "-np", str(procs), "qpad-pmd.e"]
+
         proc = subprocess.Popen(
             ['mpirun', "-np", str(procs), "qpad-pmd.e"],
             stdout=subprocess.PIPE,
@@ -938,7 +951,8 @@ def plotQPAD(sim_fold = '',
             fold_plot_array.append([])
             continue
         key = 'Charge' if quant[:3].lower() == 'rho' else quant 
-        key = 'Ion_charge' if 'ion' in quant.lower() else key 
+        key = 'Ion_charge' if 'ion' in quant.lower() else key
+        key = 'Ez' if 'ez' in quant.lower() else key 
         if('beam' in quant.lower()):
             matches = glob.glob(f"{sim_fold}/B*/{key}", recursive=True)
         elif('plasma' in quant.lower()):
