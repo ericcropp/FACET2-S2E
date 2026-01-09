@@ -512,7 +512,7 @@ class QPAD_sim:
         if using_slurm:
             slurm_ntasks = int(os.environ.get("SLURM_NTASKS",str(procs)))
             if(slurm_ntasks < procs):
-                print(f"Warning: MPI procs={procs} are oversubcribed above SLURM_NTASKS={slurm_ntasks} set by environment...")
+                print(f"Warning: QPAD MPI processes={procs} are oversubcribed above SLURM_NTASKS={slurm_ntasks} set by environment...")
                 cmd = ["mpirun", "--oversubscribe", "-np", str(procs), "qpad-pmd.e"]
             else:
                 cmd = ["mpirun", "-np", str(procs), "qpad-pmd.e"]
