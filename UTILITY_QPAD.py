@@ -510,7 +510,6 @@ class QPAD_sim:
         procs = np.prod(nodes)
         using_slurm = bool(os.environ.get("SLURM_JOB_ID"))
         if using_slurm:
-            print('Detected Slurm...')
             slurm_ntasks = int(os.environ.get("SLURM_NTASKS",str(procs)))
             if(slurm_ntasks < procs):
                 print(f"Warning: MPI procs={procs} are oversubcribed above SLURM_NTASKS={slurm_ntasks} set by environment...")
