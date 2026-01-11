@@ -25,8 +25,6 @@ This repository contains utilities, Jupyter notebooks, and configuration files u
 
    Install with QPAD:
    ```bash
-   conda install conda-build
-   ./qpad/build_pkg/build_qpad.sh
    conda env create -f bmadQPADCondaEnv.yml
    conda activate bmad-qpad
    ```
