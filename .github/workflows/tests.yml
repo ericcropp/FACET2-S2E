@@ -28,12 +28,12 @@ jobs:
     
     - name: Run fast tests
       run: |
-        pytest tests/ -m "not slow" -v --cov=src/FACET2_S2E --cov-report=term-missing
+        pytest tests/ -m "not slow" -v
       shell: bash -l {0}
     
     - name: Run all tests (including slow)
       run: |
-        pytest tests/ -v --cov=src/FACET2_S2E --cov-report=term-missing --cov-report=html
+        pytest tests/ -v
       if: github.event_name == 'pull_request'
       shell: bash -l {0}
     

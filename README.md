@@ -101,8 +101,6 @@ pytest tests/unit -v              # Unit tests
 pytest tests/integration -v       # Integration tests  
 pytest tests/system -v            # System tests
 
-# Run with coverage
-pytest tests/ --cov=src/FACET2_S2E --cov-report=html
 ```
 
 More details can be found at tests/README.md.
