@@ -1,5 +1,5 @@
 
-import UTILITY_QPAD_PICMI as picmi
+from . import UTILITY_QPAD_PICMI as picmi
 import numpy as np
 from pmd_beamphysics import ParticleGroup
 import h5py
@@ -1329,11 +1329,11 @@ def plotInteractiveQPADFigure(sim_fold = '',
     return ui, update
 
 
-def plotPlasmaProfile(defaultsFile, figsize = (6,5)):
+def plotPlasmaProfile(defaultsFile, filepath, figsize = (6,5)):
     set_matplotlib_formats('retina')
     matplotlib.rcParams.update({'figure.dpi': 200, 'savefig.dpi': 300})
 
-    with open(defaultsFile, 'r') as file:
+    with open(filepath + '/' + defaultsFile, 'r') as file:
         defaults = yaml.safe_load(file)
         
     plasma_settings = defaults['plasma']

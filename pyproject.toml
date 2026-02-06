@@ -1,0 +1,25 @@
+[project]
+name = "FACET2-S2E"
+version = "0.1.0"
+description = "Example start-to-end (S2E) simulations for FACET-II"
+requires-python = ">=3.10"
+readme = "README.md"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "system: marks tests as system tests that run actual simulations",
+    "qpad: marks tests that require QPAD to be installed",
+    "integration: marks tests as integration tests"
+]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"

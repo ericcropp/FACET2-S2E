@@ -21,15 +21,20 @@ from pmd_beamphysics import ParticleGroup
 #from pmd_beamphysics.statistics import resample_particles
 import pmd_beamphysics.statistics
 
-from UTILITY_plotMod import plotMod, slicePlotMod, floorplanPlot
-from UTILITY_linacPhaseAndAmplitude import getLinacMatchStrings, setLinacPhase, setLinacGradientAuto
-from UTILITY_modifyAndSaveInputBeam import modifyAndSaveInputBeam
-from UTILITY_setLattice import setLattice, getBendkG, getQuadkG, getSextkG, setBendkG, setQuadkG, setSextkG, setXOffset, setYOffset, setKickerkG, getKickerkG, setBendGeVc, getBendGeVc
-from UTILITY_impact import runImpact
+from .UTILITY_plotMod import plotMod, slicePlotMod, floorplanPlot
+from .UTILITY_linacPhaseAndAmplitude import getLinacMatchStrings, setLinacPhase, setLinacGradientAuto
+from .UTILITY_modifyAndSaveInputBeam import modifyAndSaveInputBeam
+from .UTILITY_setLattice import setLattice, getBendkG, getQuadkG, getSextkG, setBendkG, setQuadkG, setSextkG, setXOffset, setYOffset, setKickerkG, getKickerkG, setBendGeVc, getBendGeVc
+from .UTILITY_impact import runImpact
 # from UTILITY_OpenPMDtoBmad import OpenPMD_to_Bmad
+
+import sys
+from pathlib import Path
+
+
 import OpenPMD_to_Bmad.Update_h5_file as pmd2bmad
-from UTILITY_finalFocusSolver import finalFocusSolver
-from UTILITY_QPAD import QPAD_sim, run_QPAD
+from .UTILITY_finalFocusSolver import finalFocusSolver
+from .UTILITY_QPAD import QPAD_sim, run_QPAD
 
 import os
 import yaml
@@ -102,7 +107,7 @@ def initializeTao(
     global filePathGlobal 
     
     if not filePath:
-        filePath = os.getcwd()
+        filePath = str(Path(__file__).parent.parent.parent)
 
     if not scratchPath:
         scratchPath = filePath
@@ -251,6 +256,7 @@ def initializeTao(
 
 def trackBeam(
     tao,
+    filepath,
     trackStart = "L0AFEND",
     trackEnd = "end",
     laserHeater = False,
@@ -464,7 +470,7 @@ def trackBeam(
         # ballistic propagation from PENT to plasma
         ballisticPropagation(P, PENT_to_plasma) 
         # run plasma simulation
-        P2, lsim = run_QPAD(tao, P, defaultsFile = tao.QPADDefaultsFile)
+        P2, lsim = run_QPAD(tao, P, defaultsFile = f"{filepath}/" + tao.QPADDefaultsFile)
         # ballistic propagation from plasma to PEXIT
         ds = max(PEXITS - (PENTS + PENT_to_plasma + lsim), 0.0)
         ballisticPropagation(P2, ds)
@@ -1010,7 +1016,7 @@ def getSingleBeamSlice(
 
     return PMod
 
-def loadConfig(file, loaded_files=None):
+def loadConfig(file, filepath, loaded_files=None):
     """Code to load nested config files... ChatGPT is the author, beware!"""
     if loaded_files is None:
         loaded_files = set()
@@ -1018,14 +1024,15 @@ def loadConfig(file, loaded_files=None):
         return {}  # Avoid circular imports
     loaded_files.add(file)
 
-    with open(file, 'r') as f:
+    with open(f"{filepath}/{file}", 'r') as f:
         data = yaml.safe_load(f) or {}
 
     # Handle includes
     includes = data.pop('include', [])
     merged_data = {}
     for include_file in includes:
-        merged_data.update(loadConfig(include_file, loaded_files))
+        # full_include_path = f"{filepath}/{include_file}"
+        merged_data.update(loadConfig(include_file, filepath, loaded_files))
     
     merged_data.update(data)  # Later settings override earlier ones
     return merged_data

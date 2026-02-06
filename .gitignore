@@ -11,3 +11,6 @@ optimizerHistory.json
 beams/optimizerRunning*h5
 Manuals/
 DEEP_ARCHIVE/
+*.egg-info*
+*bmad.digested*
+/tmp/

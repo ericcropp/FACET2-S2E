@@ -27,4 +27,7 @@ dependencies:
   - openpmd-viewer=1.10
   - openmpi
   - qpad=1.6.3=*_1
+  - ffmpeg
+  - pip:
+    - git+https://github.com/ericcropp/OpenPMD_to_Bmad.git
 prefix: /sdf/group/ad/beamphysics/cropp/conda/bmadCondaEnv

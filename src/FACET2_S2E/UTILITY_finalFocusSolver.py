@@ -1,6 +1,6 @@
 from scipy.optimize import minimize
 import numpy as np
-from UTILITY_setLattice import setLattice, getBendkG, getQuadkG, getSextkG, setBendkG, setQuadkG, setSextkG, setXOffset, setYOffset
+from .UTILITY_setLattice import setLattice, getBendkG, getQuadkG, getSextkG, setBendkG, setQuadkG, setSextkG, setXOffset, setYOffset
 
 def finalFocusSolverObjective(params, tao, ele, s_offset, targetBetaX, targetAlphaX, targetBetaY, targetAlphaY):
     """

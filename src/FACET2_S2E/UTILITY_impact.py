@@ -1,5 +1,5 @@
 #Adapted from https://github.com/ericcropp/Impact-T_Examples/blob/main/FACET-II_Impact_Bmad/Impact_Bmad.ipynb
-from UTILITY_quickstart import *
+from .UTILITY_quickstart import *
 
 
 from distgen import Generator
@@ -93,7 +93,7 @@ def runImpact(
         'GUNF:theta0_deg':29.3-90,#31.83 degrees-adjustment for phase def.
         'GUNF:rf_field_scale': 119/2.44885*1e6,
         
-        'SOL10111:solenoid_field_scale':-0.41/sim_sol_conv,
+        'SOL10111:solenoid_field_scale': 0.41/sim_sol_conv,
         #'PR10241:sample_frequency':1,
         #'workdir':os.path.expandvars('~/'),
         'command': bin_path + '/ImpactTexe',  

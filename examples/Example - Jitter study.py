@@ -3,9 +3,10 @@
 import multiprocessing
 import os
 import json
+from pathlib import Path
 
 # from UTILITY_quickstart import *
-import UTILITY_quickstart as qs
+import FACET2_S2E as qs
 import numpy as np
 # import matplotlib.pyplot as plt
 # from pmd_beamphysics import ParticleGroup
@@ -152,14 +153,17 @@ def worker(config):
     csrTF = True
     transverseWakes = False
 
-    importedDefaultSettings = qs.loadConfig("setLattice_configs/2024-10-22_oneBunch_baseline3.yml")
+    filepath = str(Path(os.getcwd()).parent)
+    #Load a reference configuration
+    importedDefaultSettings = qs.loadConfig("/setLattice_configs/2024-10-22_oneBunch_baseline3.yml",filepath)
 
 
     tao = qs.initializeTao(
+        filePath=filepath,
         inputBeamFilePathSuffix = importedDefaultSettings["inputBeamFilePathSuffix"],
         csrTF = csrTF,
         numMacroParticles=1e4,
-        scratchPath = "/tmp",
+        scratchPath = filepath + "/tmp",
         randomizeFileNames = True,
         transverseWakes = transverseWakes
     )
@@ -198,7 +202,7 @@ def worker(config):
     
     try:
         #Track
-        qs.trackBeam(tao, **importedDefaultSettings)
+        qs.trackBeam(tao, filepath, **importedDefaultSettings)
         P = qs.getBeamAtElement(tao, "PENT")
 
         #Figure of LPS at PENT
@@ -211,7 +215,7 @@ def worker(config):
         
 
         #Specify the output path
-        exportPath = "/tmp/jitterStudy/"
+        exportPath = filepath + "/tmp/jitterStudy/"
 
         #Make the folder if it doesn't exist
         try:
@@ -232,6 +236,8 @@ def worker(config):
 
     except Exception as e:
         print("An error occurred:", e)
+    
+    print('Processing complete for hash:', hashStr)
 
     return
 
@@ -246,5 +252,4 @@ if __name__ == "__main__":
     with multiprocessing.Pool(num_workers) as pool:
         results = pool.map(worker, tasks)
 
-    for res in results:
-        print(res)
+    print("Jitter study complete.")

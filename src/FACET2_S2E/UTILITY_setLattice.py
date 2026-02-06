@@ -1,6 +1,6 @@
 import yaml
 
-from UTILITY_linacPhaseAndAmplitude import getLinacMatchStrings, setLinacPhase, setLinacGradientAuto
+from .UTILITY_linacPhaseAndAmplitude import getLinacMatchStrings, setLinacPhase, setLinacGradientAuto
 
 
 #This is the all-in-one function that should make any and all changes to the lattice

@@ -1,0 +1,44 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install pytest pytest-cov
+    
+    - name: Run fast tests
+      run: |
+        pytest tests/ -m "not slow" -v --cov=src/FACET2_S2E --cov-report=term-missing
+    
+    - name: Run all tests (including slow)
+      run: |
+        pytest tests/ -v --cov=src/FACET2_S2E --cov-report=term-missing --cov-report=html
+      if: github.event_name == 'pull_request'
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false

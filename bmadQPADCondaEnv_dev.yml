@@ -1,14 +1,16 @@
-name: bmadCondaEnv
+name: bmad-qpad-dev
+
 channels:
   - conda-forge
   - defaults
+  
 dependencies:
   - python=3.13
   - jupyter
   - numpy
   - matplotlib
   - pandas
-  - bmad=20250625.0
+  - bmad=20250811.0
   - pytao=0.5.3
   - openpmd-beamphysics=0.10.1
   - distgen=2.1.7
@@ -20,4 +22,13 @@ dependencies:
   - xopt
   - certifi
   - git-lfs
+  - picmistandard
+  - periodictable
+  - openpmd-viewer=1.10
+  - openmpi
+  - qpad=1.6.3=*_1
+  - ffmpeg
+  - pytest
+  - pip:
+    - git+https://github.com/ericcropp/OpenPMD_to_Bmad.git
 prefix: /sdf/group/ad/beamphysics/cropp/conda/bmadCondaEnv
