@@ -15,26 +15,36 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        lfs: true
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     
-    - name: Install dependencies
+    - name: Set up Conda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+        environment-file: bmadQPADCondaEnv_dev.yml
+        activate-environment: bmad-qpad-dev
+    
+    - name: Install package
       run: |
-        python -m pip install --upgrade pip
         pip install -e .
-        pip install pytest pytest-cov
+      shell: bash -l {0}
     
     - name: Run fast tests
       run: |
         pytest tests/ -m "not slow" -v --cov=src/FACET2_S2E --cov-report=term-missing
+      shell: bash -l {0}
     
     - name: Run all tests (including slow)
       run: |
         pytest tests/ -v --cov=src/FACET2_S2E --cov-report=term-missing --cov-report=html
       if: github.event_name == 'pull_request'
+      shell: bash -l {0}
     
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
