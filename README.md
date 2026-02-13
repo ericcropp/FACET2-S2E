@@ -11,7 +11,6 @@ This repository contains utilities, Jupyter notebooks, and configuration files u
    git clone https://github.com/slaclab/FACET2-S2E.git
    cd FACET2-S2E
    git lfs pull
-   pip install .
    ```
    Many beam files are tracked with Git LFS.  Without LFS the notebooks will fail to load example beams.
 
@@ -34,7 +33,6 @@ This repository contains utilities, Jupyter notebooks, and configuration files u
    git clone https://github.com/slaclab/FACET2-S2E.git
    cd FACET2-S2E
    git lfs pull
-   pip install .
    ```
    Many beam files are tracked with Git LFS.  Without LFS the notebooks will fail to load example beams.
 
