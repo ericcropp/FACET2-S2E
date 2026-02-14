@@ -85,23 +85,26 @@ The notebooks in the repository demonstrate typical workflows:
 
 ## Tests
 
-Automated unit, integration and system tests are located in the tests/ folder and are run through Github CI on each commit.  These cover the full scope of the examples.  To run them, do the following:
+Automated unit, integration, smoke, and system tests are located in the tests/ folder and are run through Github CI on each commit. These cover the full scope of the examples. To run them, do the following:
 
 ```bash
 # Run all tests
 pytest tests/
 
-# Run only fast tests (skip slow integration/system tests)
+# Run only fast tests (skip slow integration/smoke/system tests)
 pytest tests/ -m "not slow"
 
 # Run specific category
 pytest tests/unit -v              # Unit tests
-pytest tests/integration -v       # Integration tests  
+pytest tests/integration -v       # Integration tests
+pytest tests/smoke -v             # Smoke tests (full S2E workflow)
 pytest tests/system -v            # System tests
 
+# Run with timing information
+pytest tests/ -v --durations=10   # Show 10 slowest tests
 ```
 
-More details can be found at tests/README.md.
+More details can be found at [tests/README.md](tests/README.md).
 
 ## Repository layout
 

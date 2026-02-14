@@ -11,6 +11,8 @@ tests/
 │   └── test_initialize_tao.py
 ├── integration/                   (17 tests)
 │   └── test_examples_integration.py
+├── smoke/                         (4 tests)
+│   └── test_full_s2e.py
 ├── system/                        (4 tests)
 │   └── test_system.py
 ├── conftest.py
@@ -28,6 +30,12 @@ tests/
   - Beam operations: ballistic propagation, driver/witness separation, collimation
   - Utility functions: sorting, slicing, emittance calculation
   - Configuration loading and I/O operations
+
+### Smoke Tests (4 tests) - `smoke/`
+- **`test_full_s2e.py`**: Full start-to-end workflow validation
+  - Real test: Runs complete S2E with IMPACT-T, Bmad, and QPAD (minimal particles)
+  - Mocked tests: Verify simulator calls without running actual simulations
+  - Validates ParticleGroup creation and beam propagation
 
 ### System Tests (4 tests) - `system/`
 - **`test_system.py`**: End-to-end simulator validation (100+ particles)
@@ -48,17 +56,21 @@ pytest tests/ -m "not slow"
 
 # Run specific category
 pytest tests/unit -v              # Unit tests
-pytest tests/integration -v       # Integration tests  
+pytest tests/integration -v       # Integration tests
+pytest tests/smoke -v             # Smoke tests
 pytest tests/system -v            # System tests
 
+# Run with coverage
+pytest tests/ --cov=src/FACET2_S2E --cov-report=html
 ```
 
 ## Test Markers
 
 Available markers for filtering tests:
 
-- `slow`: Long-running tests (integration, system)
+- `slow`: Long-running tests (integration, system, smoke)
 - `system`: Simulator validation tests (IMPACT-T, Bmad, QPAD)
+- `smoke`: End-to-end workflow tests
 - `integration`: Example code integration tests
 - `qpad`: QPAD-specific tests
 
@@ -82,8 +94,17 @@ pytest tests/ -m "not slow"     # Skip slow tests
 - ✓ Use realistic data (ParticleGroup objects)
 - ✓ Validate actual behavior, not just existence
 
+### Smoke Tests
+- ✓ Execute full S2E workflow with minimal particles
+- ✓ Test complete pipeline: IMPACT-T → Bmad → QPAD
+- ✓ Both real (actual execution) and mocked (call verification) variants
+- ✓ Verify ParticleGroup creation and beam propagation
+- ✓ Faster than system tests (~seconds vs minutes)
+- ✓ Use realistic data (ParticleGroup objects)
+- ✓ Validate actual behavior, not just existence
+
 ### System Tests
-- ✓ Execute full simulators end-to-end
+- ✓ Execute full simulators separately
 - ✓ Use minimal parameters (100 particles) for speed
 - ✓ Skip gracefully if simulators unavailable
 - ✓ Verify integration between components

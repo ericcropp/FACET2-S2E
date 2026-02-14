@@ -15,6 +15,7 @@ where = ["src"]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "system: marks tests as system tests that run actual simulations",
+    "smoke: marks tests as smoke tests (full end-to-end)",
     "qpad: marks tests that require QPAD to be installed",
     "integration: marks tests as integration tests"
 ]
