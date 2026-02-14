@@ -166,12 +166,14 @@ class TestFullS2EReal:
 class TestFullS2EMocked:
     """Mocked smoke tests that verify function calls without running simulators"""
     
+    @patch('FACET2_S2E.UTILITY_quickstart.modifyAndSaveInputBeam')
     @patch('FACET2_S2E.UTILITY_quickstart.runImpact')
     @patch('FACET2_S2E.UTILITY_quickstart.Tao')
     def test_full_s2e_calls_all_simulators(
         self,
         mock_tao_class,
         mock_run_impact,
+        mock_modify_save_beam,
         project_root,
         qpad_config,
         temp_beam_file
@@ -241,9 +243,10 @@ class TestFullS2EMocked:
                 assert tao.qpadSimPath is not None, "QPAD path should be configured"
                 assert hasattr(tao, 'qpadSimPath'), "QPAD simulator path should be stored"
     
+    @patch('FACET2_S2E.UTILITY_quickstart.modifyAndSaveInputBeam')
     @patch('FACET2_S2E.UTILITY_quickstart.setLattice')
     @patch('FACET2_S2E.UTILITY_quickstart.Tao')
-    def test_impact_called_when_enabled(self, mock_tao_class, mock_set_lattice, project_root, temp_beam_file):
+    def test_impact_called_when_enabled(self, mock_tao_class, mock_set_lattice, mock_modify_save_beam, project_root, temp_beam_file):
         """Test that IMPACT-T is called when runImpactTF=True"""
         with patch('FACET2_S2E.UTILITY_quickstart.runImpact') as mock_impact:
             mock_tao = MagicMock()
@@ -264,9 +267,10 @@ class TestFullS2EMocked:
                 
                 assert mock_impact.called, "runImpact was not called when runImpactTF=True"
     
+    @patch('FACET2_S2E.UTILITY_quickstart.modifyAndSaveInputBeam')
     @patch('FACET2_S2E.UTILITY_quickstart.setLattice')
     @patch('FACET2_S2E.UTILITY_quickstart.Tao')
-    def test_qpad_enabled_when_configured(self, mock_tao_class, mock_set_lattice, project_root, qpad_config, temp_beam_file):
+    def test_qpad_enabled_when_configured(self, mock_tao_class, mock_set_lattice, mock_modify_save_beam, project_root, qpad_config, temp_beam_file):
         """Test that QPAD is enabled when runQPAD=True"""
         mock_tao = MagicMock()
         mock_tao.lat_list = MagicMock(return_value=['Q1', 'Q2'])
