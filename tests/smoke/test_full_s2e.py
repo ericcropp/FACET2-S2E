@@ -58,6 +58,35 @@ def qpad_config():
     }
 
 
+@pytest.fixture
+def temp_beam_file(project_root):
+    """Create a temporary beam file in the project root for mocked tests"""
+    # Create a simple beam with 100 particles
+    beam_data = {
+        'x': np.random.randn(100) * 1e-3,
+        'y': np.random.randn(100) * 1e-3,
+        'z': np.zeros(100),
+        'px': np.random.randn(100) * 1e6,
+        'py': np.random.randn(100) * 1e6,
+        'pz': np.ones(100) * 1e9,
+        't': np.zeros(100),
+        'status': np.ones(100, dtype=int),
+        'weight': np.ones(100),
+        'species': 'electron'
+    }
+    
+    P = ParticleGroup(data=beam_data)
+    
+    # Create temp directory in project root
+    with tempfile.TemporaryDirectory(dir=project_root) as tmpdir:
+        beam_file = os.path.join(tmpdir, "test_beam.h5")
+        P.write(beam_file)
+        
+        # Return relative path from project root
+        rel_path = os.path.relpath(beam_file, project_root)
+        yield f"/{os.path.basename(tmpdir)}/{os.path.basename(beam_file)}"
+
+
 @pytest.mark.slow
 class TestFullS2EReal:
     """Real end-to-end smoke tests that actually run simulators"""
@@ -144,7 +173,8 @@ class TestFullS2EMocked:
         mock_tao_class,
         mock_run_impact,
         project_root,
-        qpad_config
+        qpad_config,
+        temp_beam_file
     ):
         """
         Test that S2E workflow initializes all three simulators
@@ -184,7 +214,7 @@ class TestFullS2EMocked:
             with tempfile.TemporaryDirectory() as scratch_tmpdir:
                 tao = qs.initializeTao(
                     filePath=project_root,
-                    inputBeamFilePathSuffix=config.get("inputBeamFilePathSuffix"),
+                    inputBeamFilePathSuffix=temp_beam_file,
                     csrTF=True,
                     scratchPath=scratch_tmpdir,
                     randomizeFileNames=True,
@@ -198,22 +228,22 @@ class TestFullS2EMocked:
                     runSetLatticeTF=False  # Skip setLattice to avoid complex mocking
                 )
                 
-            # Verify the three simulators are initialized:
-            
-            # 1. IMPACT-T is called
-            assert mock_run_impact.called, "IMPACT-T (runImpact) was not called"
-            
-            # 2. Tao/Bmad is initialized
-            assert mock_tao_class.called, "Tao/Bmad was not initialized"
-            assert tao is not None, "Tao object should be returned"
-            
-            # 3. QPAD configuration is set
-            assert tao.qpadSimPath is not None, "QPAD path should be configured"
-            assert hasattr(tao, 'qpadSimPath'), "QPAD simulator path should be stored"
+                # Verify the three simulators are initialized:
+                
+                # 1. IMPACT-T is called
+                assert mock_run_impact.called, "IMPACT-T (runImpact) was not called"
+                
+                # 2. Tao/Bmad is initialized
+                assert mock_tao_class.called, "Tao/Bmad was not initialized"
+                assert tao is not None, "Tao object should be returned"
+                
+                # 3. QPAD configuration is set
+                assert tao.qpadSimPath is not None, "QPAD path should be configured"
+                assert hasattr(tao, 'qpadSimPath'), "QPAD simulator path should be stored"
     
     @patch('FACET2_S2E.UTILITY_quickstart.setLattice')
     @patch('FACET2_S2E.UTILITY_quickstart.Tao')
-    def test_impact_called_when_enabled(self, mock_tao_class, mock_set_lattice, project_root):
+    def test_impact_called_when_enabled(self, mock_tao_class, mock_set_lattice, project_root, temp_beam_file):
         """Test that IMPACT-T is called when runImpactTF=True"""
         with patch('FACET2_S2E.UTILITY_quickstart.runImpact') as mock_impact:
             mock_tao = MagicMock()
@@ -225,6 +255,7 @@ class TestFullS2EMocked:
             with tempfile.TemporaryDirectory() as tmpdir:
                 tao = qs.initializeTao(
                     filePath=project_root,
+                    inputBeamFilePathSuffix=temp_beam_file,
                     runImpactTF=True,
                     numMacroParticles=100,
                     scratchPath=tmpdir,
@@ -235,7 +266,7 @@ class TestFullS2EMocked:
     
     @patch('FACET2_S2E.UTILITY_quickstart.setLattice')
     @patch('FACET2_S2E.UTILITY_quickstart.Tao')
-    def test_qpad_enabled_when_configured(self, mock_tao_class, mock_set_lattice, project_root, qpad_config):
+    def test_qpad_enabled_when_configured(self, mock_tao_class, mock_set_lattice, project_root, qpad_config, temp_beam_file):
         """Test that QPAD is enabled when runQPAD=True"""
         mock_tao = MagicMock()
         mock_tao.lat_list = MagicMock(return_value=['Q1', 'Q2'])
@@ -254,6 +285,7 @@ class TestFullS2EMocked:
             
             tao = qs.initializeTao(
                 filePath=project_root,
+                inputBeamFilePathSuffix=temp_beam_file,
                 runQPAD=True,
                 setQPADDefaultsFile=qpad_config_relpath,
                 scratchPath=config_tmpdir,
