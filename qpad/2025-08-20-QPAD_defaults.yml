@@ -1,9 +1,9 @@
 simulation:
   grid:
     r: [0, 150.e-06]
-    r_cells: 256
+    r_cells: 64
     z: [-200.e-06, 100.e-06]
-    z_cells: 512
+    z_cells: 128
     max_mode: 0
   if_timing: true # report timings
   nprocs: [2, 2] 
