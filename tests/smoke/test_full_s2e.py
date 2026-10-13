@@ -88,6 +88,7 @@ def temp_beam_file(project_root):
 
 
 @pytest.mark.slow
+@pytest.mark.requires_tao
 class TestFullS2EReal:
     """Real end-to-end smoke tests that actually run simulators"""
     

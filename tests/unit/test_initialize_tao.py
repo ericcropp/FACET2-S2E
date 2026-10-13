@@ -44,6 +44,7 @@ class TestInitializeTao:
         assert os.environ.get('FACET2_LATTICE') == test_path
     
     @pytest.mark.integration
+    @pytest.mark.requires_tao
     def test_tao_is_pytao_object(self):
         """Test that returned tao is actually a Tao object - integration test"""
         from FACET2_S2E.simulators.bmad.core import initializeTao

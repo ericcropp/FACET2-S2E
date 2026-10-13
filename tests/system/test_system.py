@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 import FACET2_S2E as qs
 
 # Mark all tests in this module as system tests
-pytestmark = pytest.mark.slow
+pytestmark = [pytest.mark.slow, pytest.mark.requires_tao]
 
 
 @pytest.fixture(scope="module")
