@@ -2,7 +2,18 @@
 
 The magnet and RF settings saved in a FACET-II DAQ scan can be loaded into the Bmad lattice. This is optional: without a scan, the simulations use the lattice from `setLattice_configs/` (see [bmad_simulations.md](bmad_simulations.md)).
 
-The DAQ scans are stored under `/sdf/data/ad/fs/transition/nfs/slac/g/facet/matlab/data_prod/nas-li20-pm00/`, which is not mounted on the S3DF login nodes (see [installation.md](installation.md#on-s3df)).
+## Where the DAQ data is
+
+The DAQ data is only accessible from inside SLAC; its location is given in the internal FACET-II documentation. Tell the package where it is in one of two ways:
+
+- set the `FACET2_DAQ_ROOT` environment variable to the root folder of the DAQ data, e.g. once for the conda environment:
+  ```bash
+  conda env config vars set FACET2_DAQ_ROOT=<DAQ data root>
+  conda activate <your environment>     # re-activate to apply
+  ```
+- or pass `daq_root="<DAQ data root>"` to `get_tao_from_experiment()`.
+
+The DAQ data may not be visible from every node (see [installation.md](installation.md#on-s3df)).
 
 ## Choosing a scan
 
@@ -15,7 +26,7 @@ A scan is identified by three strings:
 | `date` | `"/2026/20260121"` | `/YYYY/YYYYMMDD` of the scan |
 
 The file that gets read is
-`<DAQ root>/<experiment><date>/<experiment>_<scan_number>/<experiment>_<scan_number>.mat`.
+`<DAQ data root>/<experiment><date>/<experiment>_<scan_number>/<experiment>_<scan_number>.mat`.
 
 ## With `get_tao_from_experiment()`
 
@@ -26,11 +37,12 @@ Pass the three strings to `get_tao_from_experiment()`; everything else works as 
 The DAQ values can also be applied on top of the standard `initializeTao()` / `trackBeam()` setup: the lattice from `defaults.yml`, CSR only in the bunch compressors, and the beam loaded through `activeBeamFile.h5`.
 
 ```python
+import os
 import FACET2_S2E as qs
 from Experimental_functions import DATASET
 
 REPO = "/path/to/FACET2-S2E"
-DAQ_ROOT = "/sdf/data/ad/fs/transition/nfs/slac/g/facet/matlab/data_prod/nas-li20-pm00"
+DAQ_ROOT = os.environ["FACET2_DAQ_ROOT"]   # see "Where the DAQ data is" above
 
 tao = qs.initializeTao(
     filePath=REPO,

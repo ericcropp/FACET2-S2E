@@ -242,7 +242,7 @@ __all__ = [
     # Final focus optimization
     'finalFocusSolver',
 
-    # Functions ported over from FACET2_S2E_Kladov (kept there too, unmodified).
+    # Bmad workflow built around get_tao_from_experiment(): beams, runs, energy tuning, DAQ settings
 
     ## Bunch support functions
 
@@ -263,7 +263,7 @@ __all__ = [
     ### Cut the bunch to a certain length
     'cut_length',
 
-    ## Initialize and run a simulation (Kladov's)
+    ## Initialize and run a simulation
 
     ### High end
     'get_tao_from_experiment',
@@ -295,7 +295,7 @@ __all__ = [
     'make_1d_scan',
     'make_comparison_dz_2nd_order',
 
-    ## Simulation parameters functions (Kladov's)
+    ## Simulation parameters functions
 
     # Get lattice info
     'get_element_array',
@@ -306,7 +306,7 @@ __all__ = [
     'setAllWChicaneSextupolesXOffsets',
     'setAllWChicaneSextupolesYOffsets',
 
-    ## Plotting functions (Kladov's)
+    ## Plotting functions
 
     'enable_plt_styling',
     ### Display a bunch

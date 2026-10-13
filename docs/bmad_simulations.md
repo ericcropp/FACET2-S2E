@@ -4,7 +4,7 @@
 
 It can also load the magnet and RF settings saved in a FACET-II DAQ scan. This is optional: if you don't need the DAQ data, leave `experiment` and `scan_number` empty, and the lattice is `setLattice_configs/defaults.yml` plus the file given in `lattice`. Loading DAQ settings is described in [daq_settings.md](daq_settings.md).
 
-Examples of every option are in [`examples/Example - BMAD tutorial.ipynb`](<../examples/Example - BMAD tutorial.ipynb>). How the bends are treated when the energies differ from the nominal ones is shown in [`examples/Example - BMAD dipole showcase.ipynb`](<../examples/Example - BMAD dipole showcase.ipynb>).
+Examples of every option are in [`examples/Example - BMAD tutorial.ipynb`](<../examples/Example - BMAD tutorial.ipynb>).
 
 ## Example
 
@@ -45,6 +45,7 @@ The function does the following, in order:
 |---|---|---|
 | `filepath` | `None` | Path to this repository. If `None`, it is found from the installed package (requires `pip install -e .`). |
 | `experiment`, `scan_number`, `date` | `""` | DAQ scan to load (optional, see [daq_settings.md](daq_settings.md)). |
+| `daq_root` | `None` | Root folder of the DAQ data. If `None`, the `FACET2_DAQ_ROOT` environment variable is used. |
 | `lattice` | `2024-12-09_oneBunch_CSR-on_optimized.yml` | Settings applied on top of `defaults.yml`. |
 | `file_ext` | `""` | Input beam, without `.h5`. If `""`, a Gaussian beam is generated from `moments`. |
 | `N_to_use_from_file` | `None` | Randomly sample this many particles from the file. |

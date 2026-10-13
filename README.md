@@ -42,7 +42,6 @@ The notebooks in [`examples/`](examples/) demonstrate typical workflows:
 * **`Example - Multiparticle tracking optimization.ipynb`** – demonstrates optimization constrained by real-world hardware limits of a multiparticle tracked beam
 * **`Example - Solution postprocessing and analysis.ipynb`** – postprocessing and analysis of the beam throughout the lattice
 * **`Example - BMAD tutorial.ipynb`** – Bmad simulations with `get_tao_from_experiment()`, optionally with the lattice settings saved in a FACET-II DAQ scan. See [docs/bmad_simulations.md](docs/bmad_simulations.md)
-* **`Example - BMAD dipole showcase.ipynb`** – how bends are simulated when the linac energies differ from the nominal ones
 * **`Example - Beam visualization.nb`** – Mathematica notebook for advanced beam visualization and analysis, including 3D animation generation
 * **`Example - Optimization progress dashboard.nb`** – Mathematica companion notebook which visualizes optimization progress, e.g. parameter sensitivities and convergence
 * **`Example - Jitter study.py`** – Parallel computation of many simulations with parameters subject to jitter, informed by real-world measurements

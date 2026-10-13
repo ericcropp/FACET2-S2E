@@ -258,6 +258,15 @@ class TestRuns:
 
 
 class TestExperimentDatabase:
+    def test_daq_scan_path(self, monkeypatch):
+        monkeypatch.delenv("FACET2_DAQ_ROOT", raising=False)
+        with pytest.raises(ValueError, match="FACET2_DAQ_ROOT"):
+            exp.daq_scan_path("BEAMPHYS", "/2026/20260121")
+        assert exp.daq_scan_path("BEAMPHYS", "/2026/20260121", daq_root="/daq") == "/daq/BEAMPHYS/2026/20260121"
+        monkeypatch.setenv("FACET2_DAQ_ROOT", "/env/daq")
+        assert exp.daq_scan_path("BEAMPHYS", "/2026/20260121") == "/env/daq/BEAMPHYS/2026/20260121"
+        assert exp.daq_scan_path("BEAMPHYS", "/2026/20260121", daq_root="/daq") == "/daq/BEAMPHYS/2026/20260121"
+
     def test_cavity_getters(self):
         ds = FakeDataset()
         ds.set(["nonBSA_List_S10RF", 'KLYS_LI10_31_SFB_PDES'], 5.0)
@@ -327,11 +336,11 @@ class TestGetTaoFromExperiment:
         q_before = qs.getQuadkG(tao, "QA10361")
         k1_before = tao.ele_gen_attribs("QA10361")["K1"]
         with patch.object(exp, "DATASET", lambda *args, **kwargs: ds):
-            tao = qs.get_tao_from_experiment(experiment="TEST", scan_number="1", filepath=s2e_root, run=False,
+            tao = qs.get_tao_from_experiment(experiment="TEST", scan_number="1", filepath=s2e_root, run=False, daq_root="/daq",
                                              N_in_simple_bunch=100, moments=[1e-4]*6)
             assert qs.getQuadkG(tao, "QA10361") == pytest.approx(q_before + 0.1, abs=1e-6)
             assert 360*tao.ele_gen_attribs("L0BF")["PHI0"] == pytest.approx(-15.0)
-            tao = qs.get_tao_from_experiment(experiment="TEST", scan_number="1", filepath=s2e_root, run=False,
+            tao = qs.get_tao_from_experiment(experiment="TEST", scan_number="1", filepath=s2e_root, run=False, daq_root="/daq",
                                              N_in_simple_bunch=100, moments=[1e-4]*6, edit_only_energy_from_exp=True)
             # quads not loaded: K1 is kept (the kG readback follows the edited energy)
             assert tao.ele_gen_attribs("QA10361")["K1"] == pytest.approx(k1_before, rel=1e-9)

@@ -28,7 +28,19 @@ from .runs import set_beam, edit_energy_based_on_beam_all, run_initialized_sim_e
 
 ### High end
 
-def get_tao_from_experiment(experiment="", scan_number="", date="", start='L0AFEND', finish='PR11375', filepath=None, locationsToSave = [],
+def daq_scan_path(experiment, date, daq_root=None):
+    """Folder of a DAQ experiment, <daq_root>/<experiment><date> (e.g. date="/2026/20260121").
+
+    daq_root: root folder of the FACET-II DAQ data. If None, the FACET2_DAQ_ROOT environment variable is used.
+    """
+    root = daq_root or os.environ.get("FACET2_DAQ_ROOT")
+    if not root:
+        raise ValueError("The location of the FACET-II DAQ data is not set: pass daq_root=... or set the "
+                         "FACET2_DAQ_ROOT environment variable (see docs/daq_settings.md).")
+    return os.path.join(root, experiment + date)
+
+
+def get_tao_from_experiment(experiment="", scan_number="", date="", start='L0AFEND', finish='PR11375', filepath=None, locationsToSave = [], daq_root=None,
                             csrTF=False, lscTF=False, file_ext = "", energy=None, N_in_simple_bunch=5e4, N_to_use_from_file=None, tune_dipoles_to_125_335_4500_10000_MeV=False, tune_dipoles=True,
                             correctors_coef=0, correctors_from_beg=False, run=True, gaussFromExternal=False, edit_only_energy_from_exp=False, energy_edit_on_beam=False, verbose=False,
                             lattice='setLattice_configs/2024-12-09_oneBunch_CSR-on_optimized.yml', moments=[None,None,None,None,None,None], means=[0,0,0,0,None], charge=1.6e-9, sr_wakes_on=False, lr_wakes_on=False,
@@ -38,6 +50,7 @@ def get_tao_from_experiment(experiment="", scan_number="", date="", start='L0AFE
     experiment: "BEAMPHYS" is an example.
     scan_number: DAQ scan number. "14438" is an example.
     date: the date when the scan was taken in a specific form. "/2026/20260121" is an example.
+    daq_root: root folder of the FACET-II DAQ data. If None, the FACET2_DAQ_ROOT environment variable is used.
 
     start: where the simulation starts. This 1) can affect the initial bunch energy (see "energy"), 2) determines the start for the energy_edit_on_beam and run_initialized_sim functions.
     finish: determines the finish for the energy_edit_on_beam and run_initialized_sim functions.
@@ -100,7 +113,7 @@ def get_tao_from_experiment(experiment="", scan_number="", date="", start='L0AFE
     dipoleEnergies_MeV = [125, 335, 4500, 10000]
     # copy the experiment data
     if experiment!="" and scan_number!="":
-        ds = DATASET("", experiment, scan_number, pathfull = "".join(["/sdf/data/ad/fs/transition/nfs/slac/g/facet/matlab/data_prod/nas-li20-pm00/", experiment, date]))
+        ds = DATASET("", experiment, scan_number, pathfull = daq_scan_path(experiment, date, daq_root))
         # check if magnets data is not needed. Dogleg energy is always 125 MeV (maybe need to change to the mean of 'BEND_IN10_661_BDES' and 'BEND_IN10_751_BDES' (they are in GeV), so that the magnet strengths are actually correct)
         if edit_only_energy_from_exp:
             tao = edit_energy_tao_based_on_experiment_database(tao, ds)

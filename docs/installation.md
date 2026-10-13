@@ -45,8 +45,8 @@
 
 ## On S3DF
 
-- Home quotas are small. Install conda and the environments in a group directory, e.g. `/sdf/group/<group>/<user>/`.
-- The FACET-II DAQ data (`/sdf/data/ad/fs/transition/nfs/slac/g/facet/matlab/data_prod/nas-li20-pm00/`) is **not** mounted on the `sdflogin` nodes. To load DAQ scans, work on a node where that path is visible, e.g. a compute node through Slurm or S3DF OnDemand. Everything else works on any node.
+- Home quotas are small. Install conda and the environments in a group directory.
+- The FACET-II DAQ data is **not** mounted on the login nodes. To load DAQ scans, work on a node where it is visible, e.g. a compute node through Slurm or S3DF OnDemand, and tell the package where the data is (see [daq_settings.md](daq_settings.md#where-the-daq-data-is)). Everything else works on any node.
 - Run long simulations through Slurm, not on a login node.
 
 ## Large files
