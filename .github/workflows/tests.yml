@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26
       with:
         lfs: true
     
     - name: Set up Conda
-      uses: conda-incubator/setup-miniconda@v3
+      uses: conda-incubator/setup-miniconda@fc2d68f6413eb2d87b895e92f8584b5b94a10167
       with:
         environment-file: bmadQPADCondaEnv_dev.yml
         activate-environment: bmad-qpad-dev
@@ -38,7 +38,7 @@ jobs:
       shell: bash -l {0}
     
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@ab904c41d6ece82784817410c45d8b8c02684457
       if: always()
       with:
         file: ./coverage.xml
