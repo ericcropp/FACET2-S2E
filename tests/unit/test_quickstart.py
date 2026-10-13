@@ -1,5 +1,5 @@
 """
-Tests for FACET2_S2E.UTILITY_quickstart module
+Tests for the functions formerly in FACET2_S2E.UTILITY_quickstart (now spread over simulators/bmad/, simulators/bmad/lattice/ and beam/)
 
 This test suite provides comprehensive coverage for all functions in the quickstart utility.
 Some tests require mocking Tao objects and ParticleGroup data structures.
@@ -150,7 +150,7 @@ class TestSmallestIntervalImpliedSigma:
     
     def test_implied_sigma_gaussian_distribution(self):
         """Test implied sigma with known Gaussian distribution"""
-        from FACET2_S2E.UTILITY_quickstart import smallestIntervalImpliedSigma
+        from FACET2_S2E.beam.analysis import smallestIntervalImpliedSigma
         
         np.random.seed(42)
         sigma_true = 3.0
@@ -164,7 +164,7 @@ class TestSmallestIntervalImpliedSigma:
     
     def test_implied_sigma_known_values(self):
         """Test implied sigma with synthetic data"""
-        from FACET2_S2E.UTILITY_quickstart import smallestIntervalImpliedSigma
+        from FACET2_S2E.beam.analysis import smallestIntervalImpliedSigma
         
         # Create known distribution: uniform from -1 to 1
         nums = np.array([-1, -0.5, 0, 0.5, 1])
@@ -179,7 +179,7 @@ class TestSmallestIntervalImpliedEmittanceModelFunction:
     
     def test_model_function_math_zero(self):
         """Test the model function gives correct value at z=0 with rho=0"""
-        from FACET2_S2E.UTILITY_quickstart import smallestIntervalImpliedEmittanceModelFunction
+        from FACET2_S2E.beam.analysis import smallestIntervalImpliedEmittanceModelFunction
         
         sigmax = 2e-3
         sigmaxp = 1e-5
@@ -192,7 +192,7 @@ class TestSmallestIntervalImpliedEmittanceModelFunction:
     
     def test_model_function_math_nonzero_z(self):
         """Test the model function with non-zero z"""
-        from FACET2_S2E.UTILITY_quickstart import smallestIntervalImpliedEmittanceModelFunction
+        from FACET2_S2E.beam.analysis import smallestIntervalImpliedEmittanceModelFunction
         
         sigmax = 1e-3
         sigmaxp = 2e-5
@@ -207,7 +207,7 @@ class TestSmallestIntervalImpliedEmittanceModelFunction:
     
     def test_model_function_array_input(self):
         """Test the model function with array input"""
-        from FACET2_S2E.UTILITY_quickstart import smallestIntervalImpliedEmittanceModelFunction
+        from FACET2_S2E.beam.analysis import smallestIntervalImpliedEmittanceModelFunction
         
         z_vals = np.array([-1, -0.5, 0, 0.5, 1])
         sigmax = 1e-3
@@ -347,7 +347,7 @@ class TestNudgeMacroparticleWeights:
     
     def test_nudge_weights_witness_designation(self):
         """Test that particles get correct weights for witness bunch"""
-        from FACET2_S2E.UTILITY_quickstart import nudgeMacroparticleWeights
+        from FACET2_S2E.beam.manipulation import nudgeMacroparticleWeights
         
         P = Mock()
         n_particles = 100
@@ -377,7 +377,7 @@ class TestNudgeMacroparticleWeights:
     
     def test_nudge_weights_driver_designation(self):
         """Test that particles get correct weights for driver bunch"""
-        from FACET2_S2E.UTILITY_quickstart import nudgeMacroparticleWeights
+        from FACET2_S2E.beam.manipulation import nudgeMacroparticleWeights
         
         P = Mock()
         n_particles = 100
@@ -401,7 +401,7 @@ class TestNudgeMacroparticleWeights:
     
     def test_nudge_weights_weight_values_correct(self):
         """Test that weight multipliers are correct"""
-        from FACET2_S2E.UTILITY_quickstart import nudgeMacroparticleWeights
+        from FACET2_S2E.beam.manipulation import nudgeMacroparticleWeights
         
         # Test witness designation creates 0.999x weight for trailing
         P = Mock()
@@ -433,7 +433,7 @@ class TestGetDriverAndWitness:
     
     def test_get_driver_witness_integration_correct_split(self):
         """Integration test: verify particles are correctly split by weight"""
-        from FACET2_S2E.UTILITY_quickstart import getDriverAndWitness
+        from FACET2_S2E.beam.manipulation import getDriverAndWitness
         
         # Create a mock beam with two unique weights
         P = Mock()
@@ -472,14 +472,14 @@ class TestGetDriverAndWitness:
 class TestWriteBeam:
     """Tests for writeBeam function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.pmd2bmad.OpenPMD_to_Bmad')
+    @patch('FACET2_S2E.simulators.bmad.core.pmd2bmad.OpenPMD_to_Bmad')
     def test_write_beam(self, mock_openpmd):
         """Test writing beam to file"""
         P = Mock()
         P.write = Mock()
         fileName = '/tmp/test_beam.h5'
         
-        from FACET2_S2E.UTILITY_quickstart import writeBeam
+        from FACET2_S2E.simulators.bmad.core import writeBeam
         writeBeam(P, fileName)
         
         P.write.assert_called_once_with(fileName)
@@ -489,10 +489,10 @@ class TestWriteBeam:
 class TestCollimateBeam:
     """Tests for collimateBeam function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
+    @patch('FACET2_S2E.beam.manipulation.ParticleGroup')
     def test_collimate_beam_single_notch(self, mock_pg_class):
         """Test beam collimation with single notch"""
-        from FACET2_S2E.UTILITY_quickstart import collimateBeam
+        from FACET2_S2E.beam.manipulation import collimateBeam
         
         P = Mock()
         n = 100
@@ -532,10 +532,10 @@ class TestCollimateBeam:
             # Should have fewer particles than original
             assert len(filtered_x) < len(x_array)
     
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
+    @patch('FACET2_S2E.beam.manipulation.ParticleGroup')
     def test_collimate_beam_particle_removal_math(self, mock_pg_class):
         """Test that correct particles are marked for removal"""
-        from FACET2_S2E.UTILITY_quickstart import collimateBeam
+        from FACET2_S2E.beam.manipulation import collimateBeam
         
         P = Mock()
         # Create beam with known positions
@@ -574,10 +574,10 @@ class TestCollimateBeam:
 class TestSliceBeam:
     """Tests for sliceBeam function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
+    @patch('FACET2_S2E.beam.manipulation.ParticleGroup')
     def test_slice_beam_count(self, mock_pg_class):
         """Test that sliceBeam creates correct number of beamlets"""
-        from FACET2_S2E.UTILITY_quickstart import sliceBeam
+        from FACET2_S2E.beam.manipulation import sliceBeam
         
         P = Mock()
         n = 90
@@ -603,10 +603,10 @@ class TestSliceBeam:
         # Should create 3 beamlets
         assert mock_pg_class.call_count == 3
     
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
+    @patch('FACET2_S2E.beam.manipulation.ParticleGroup')
     def test_slice_beam_equal_distribution(self, mock_pg_class):
         """Test that particles are distributed equally among beamlets"""
-        from FACET2_S2E.UTILITY_quickstart import sliceBeam
+        from FACET2_S2E.beam.manipulation import sliceBeam
         
         P = Mock()
         n = 100
@@ -644,10 +644,10 @@ class TestSliceBeam:
 class TestGetSingleBeamSlice:
     """Tests for getSingleBeamSlice function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
+    @patch('FACET2_S2E.beam.manipulation.ParticleGroup')
     def test_get_single_slice_basic(self, mock_pg_class):
         """Test extracting single beam slice with min/max"""
-        from FACET2_S2E.UTILITY_quickstart import getSingleBeamSlice
+        from FACET2_S2E.beam.manipulation import getSingleBeamSlice
         
         P = Mock()
         n = 100
@@ -678,10 +678,10 @@ class TestGetSingleBeamSlice:
             assert np.all(filtered_z >= 4.0)
             assert np.all(filtered_z <= 6.0)
     
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
+    @patch('FACET2_S2E.beam.manipulation.ParticleGroup')
     def test_get_single_slice_particle_count(self, mock_pg_class):
         """Test particle count reduction in slice"""
-        from FACET2_S2E.UTILITY_quickstart import getSingleBeamSlice
+        from FACET2_S2E.beam.manipulation import getSingleBeamSlice
         
         P = Mock()
         n = 1000
@@ -714,7 +714,7 @@ class TestCenterBeam:
     
     def test_center_beam_median_math(self):
         """Test centering with median - verify math"""
-        from FACET2_S2E.UTILITY_quickstart import centerBeam
+        from FACET2_S2E.beam.manipulation import centerBeam
         
         P = Mock()
         P.x = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
@@ -740,7 +740,7 @@ class TestCenterBeam:
     
     def test_center_beam_mean_math(self):
         """Test centering with mean - verify math"""
-        from FACET2_S2E.UTILITY_quickstart import centerBeam
+        from FACET2_S2E.beam.manipulation import centerBeam
         
         P = Mock()
         P.x = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
@@ -758,7 +758,7 @@ class TestCenterBeam:
     
     def test_center_beam_with_energy_assertion(self):
         """Test centering with energy assertion"""
-        from FACET2_S2E.UTILITY_quickstart import centerBeam
+        from FACET2_S2E.beam.manipulation import centerBeam
         
         P = Mock()
         P.x = np.array([1.0, 2.0, 3.0])
@@ -781,7 +781,7 @@ class TestAddLHModulation:
     
     def test_add_lh_modulation_output_format(self):
         """Test that addLHmodulation returns correct output format"""
-        from FACET2_S2E.UTILITY_quickstart import addLHmodulation
+        from FACET2_S2E.beam.microbunching import addLHmodulation
         
         P = Mock()
         n = 1000
@@ -809,7 +809,7 @@ class TestAddLHModulation:
     
     def test_add_lh_modulation_gamma_change(self):
         """Test that modulation actually changes gamma"""
-        from FACET2_S2E.UTILITY_quickstart import addLHmodulation
+        from FACET2_S2E.beam.microbunching import addLHmodulation
         
         P = Mock()
         n = 500
@@ -849,7 +849,7 @@ class TestGetBeamSpecs:
     
     def test_beam_specs_single_bunch_detection(self):
         """Test that single bunch is correctly detected"""
-        from FACET2_S2E.UTILITY_quickstart import getBeamSpecs
+        from FACET2_S2E.beam.analysis import getBeamSpecs
         
         # For single bunch, the function should detect 1 unique weight
         # Skip actual execution since it requires complex ParticleGroup mocking
@@ -860,7 +860,7 @@ class TestGetBeamSpecs:
     
     def test_beam_specs_two_bunch_detection(self):
         """Test that two bunches are correctly detected"""
-        from FACET2_S2E.UTILITY_quickstart import getBeamSpecs
+        from FACET2_S2E.beam.analysis import getBeamSpecs
         
         # For two bunches, should have 2 unique weights
         weights = np.concatenate([np.ones(50) * 0.999e-10, np.ones(50) * 1.001e-10])
@@ -879,10 +879,10 @@ class TestGetBeamSpecs:
         # Function expects 1 or 2, so 3 should trigger abort
         assert unique_count == 3  # Would cause function to return None
     
-    @patch('FACET2_S2E.UTILITY_quickstart.getBeamSpecs')
+    @patch('FACET2_S2E.beam.analysis.getBeamSpecs')
     def test_beam_specs_twiss_treaty_points_used(self, mock_get_specs):
         """Test that treaty point strings are actually used when calling getBeamSpecs"""
-        from FACET2_S2E.UTILITY_quickstart import getBeamSpecs
+        from FACET2_S2E.beam.analysis import getBeamSpecs
         
         # Mock getBeamSpecs to return expected output for treaty points
         expected_result = {
@@ -910,10 +910,10 @@ class TestGetBeamSpecs:
         result3 = getBeamSpecs(P_mock, targetTwiss='MFFF')
         assert mock_get_specs.called
     
-    @patch('FACET2_S2E.UTILITY_quickstart.getBeamSpecs')
+    @patch('FACET2_S2E.beam.analysis.getBeamSpecs')
     def test_beam_specs_saved_data_structure(self, mock_get_specs):
         """Test that getBeamSpecs returns a dict with PDrive_ keys"""
-        from FACET2_S2E.UTILITY_quickstart import getBeamSpecs
+        from FACET2_S2E.beam.analysis import getBeamSpecs
         
         # Mock getBeamSpecs to return expected output structure
         expected_result = {
@@ -952,7 +952,7 @@ class TestGetBeamSpecs:
     
     def test_beam_specs_two_bunch_extra_keys(self):
         """Test that two-bunch beams return witness keys and bunchSpacing"""
-        from FACET2_S2E.UTILITY_quickstart import getBeamSpecs
+        from FACET2_S2E.beam.analysis import getBeamSpecs
         
         # Create two-bunch beam with real ParticleGroup mock structure
         # Driver bunch (trailing) - half with first weight
@@ -1068,12 +1068,12 @@ class TestGetBeamSpecs:
 class TestTrackBeam:
     """Tests for trackBeam function - check all if statements"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.trackBeamHelper')
-    @patch('FACET2_S2E.UTILITY_quickstart.getBeamAtElement')
-    @patch('FACET2_S2E.UTILITY_quickstart.writeBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.trackBeamHelper')
+    @patch('FACET2_S2E.simulators.bmad.core.getBeamAtElement')
+    @patch('FACET2_S2E.simulators.bmad.core.writeBeam')
     def test_track_beam_laser_heater_path(self, mock_write, mock_get_beam, mock_helper):
         """Test trackBeam laser heater condition"""
-        from FACET2_S2E.UTILITY_quickstart import trackBeam
+        from FACET2_S2E.simulators.bmad.core import trackBeam
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1100,7 +1100,7 @@ class TestTrackBeam:
         mock_beam.copy = Mock(return_value=mock_beam)
         mock_get_beam.return_value = mock_beam
         
-        with patch('FACET2_S2E.UTILITY_quickstart.addLHmodulation') as mock_lh:
+        with patch('FACET2_S2E.simulators.bmad.core.addLHmodulation') as mock_lh:
             mock_lh.return_value = (mock_beam, np.zeros(100), np.zeros(100))
             
             trackBeam(
@@ -1117,12 +1117,12 @@ class TestTrackBeam:
         # Verify addLHmodulation was called
         assert mock_lh.called
     
-    @patch('FACET2_S2E.UTILITY_quickstart.trackBeamHelper')
-    @patch('FACET2_S2E.UTILITY_quickstart.getBeamAtElement')
-    @patch('FACET2_S2E.UTILITY_quickstart.writeBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.trackBeamHelper')
+    @patch('FACET2_S2E.simulators.bmad.core.getBeamAtElement')
+    @patch('FACET2_S2E.simulators.bmad.core.writeBeam')
     def test_track_beam_center_dl10_path(self, mock_write, mock_get_beam, mock_helper):
         """Test trackBeam centerDL10 condition"""
-        from FACET2_S2E.UTILITY_quickstart import trackBeam
+        from FACET2_S2E.simulators.bmad.core import trackBeam
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1149,7 +1149,7 @@ class TestTrackBeam:
         mock_beam.copy = Mock(return_value=mock_beam)
         mock_get_beam.return_value = mock_beam
         
-        with patch('FACET2_S2E.UTILITY_quickstart.centerBeam') as mock_center:
+        with patch('FACET2_S2E.simulators.bmad.core.centerBeam') as mock_center:
             mock_center.return_value = mock_beam
             
             trackBeam(
@@ -1163,12 +1163,12 @@ class TestTrackBeam:
         # Verify centerBeam was called
         assert mock_center.called
     
-    @patch('FACET2_S2E.UTILITY_quickstart.trackBeamHelper')
-    @patch('FACET2_S2E.UTILITY_quickstart.getBeamAtElement')
-    @patch('FACET2_S2E.UTILITY_quickstart.writeBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.trackBeamHelper')
+    @patch('FACET2_S2E.simulators.bmad.core.getBeamAtElement')
+    @patch('FACET2_S2E.simulators.bmad.core.writeBeam')
     def test_track_beam_assert_bc14_energy(self, mock_write, mock_get_beam, mock_helper):
         """Test trackBeam BC14 energy assertion"""
-        from FACET2_S2E.UTILITY_quickstart import trackBeam
+        from FACET2_S2E.simulators.bmad.core import trackBeam
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1195,7 +1195,7 @@ class TestTrackBeam:
         mock_beam.copy = Mock(return_value=mock_beam)
         mock_get_beam.return_value = mock_beam
         
-        with patch('FACET2_S2E.UTILITY_quickstart.centerBeam') as mock_center:
+        with patch('FACET2_S2E.simulators.bmad.core.centerBeam') as mock_center:
             mock_center.return_value = mock_beam
             
             # Test with bool True (should use default 4.5 GeV)
@@ -1213,12 +1213,12 @@ class TestTrackBeam:
         call_kwargs = mock_center.call_args[1]
         assert 'assertEnergy' in call_kwargs
     
-    @patch('FACET2_S2E.UTILITY_quickstart.trackBeamHelper')
-    @patch('FACET2_S2E.UTILITY_quickstart.getBeamAtElement')
-    @patch('FACET2_S2E.UTILITY_quickstart.writeBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.trackBeamHelper')
+    @patch('FACET2_S2E.simulators.bmad.core.getBeamAtElement')
+    @patch('FACET2_S2E.simulators.bmad.core.writeBeam')
     def test_track_beam_collimator_path(self, mock_write, mock_get_beam, mock_helper):
         """Test trackBeam collimator condition"""
-        from FACET2_S2E.UTILITY_quickstart import trackBeam
+        from FACET2_S2E.simulators.bmad.core import trackBeam
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1244,7 +1244,7 @@ class TestTrackBeam:
         mock_beam.copy = Mock(return_value=mock_beam)
         mock_get_beam.return_value = mock_beam
         
-        with patch('FACET2_S2E.UTILITY_quickstart.collimateBeam') as mock_collimate:
+        with patch('FACET2_S2E.simulators.bmad.core.collimateBeam') as mock_collimate:
             mock_collimate.return_value = mock_beam
             
             trackBeam(
@@ -1258,12 +1258,12 @@ class TestTrackBeam:
         # collimateBeam should be called
         assert mock_collimate.called
     
-    @patch('FACET2_S2E.UTILITY_quickstart.trackBeamHelper')
-    @patch('FACET2_S2E.UTILITY_quickstart.getBeamAtElement')
-    @patch('FACET2_S2E.UTILITY_quickstart.writeBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.trackBeamHelper')
+    @patch('FACET2_S2E.simulators.bmad.core.getBeamAtElement')
+    @patch('FACET2_S2E.simulators.bmad.core.writeBeam')
     def test_track_beam_center_bc14_path(self, mock_write, mock_get_beam, mock_helper):
         """Test trackBeam centerBC14 condition"""
-        from FACET2_S2E.UTILITY_quickstart import trackBeam
+        from FACET2_S2E.simulators.bmad.core import trackBeam
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1289,7 +1289,7 @@ class TestTrackBeam:
         mock_beam.copy = Mock(return_value=mock_beam)
         mock_get_beam.return_value = mock_beam
         
-        with patch('FACET2_S2E.UTILITY_quickstart.centerBeam') as mock_center:
+        with patch('FACET2_S2E.simulators.bmad.core.centerBeam') as mock_center:
             mock_center.return_value = mock_beam
             
             trackBeam(
@@ -1303,12 +1303,12 @@ class TestTrackBeam:
         # centerBeam should be called for BC14 centering
         assert mock_center.called
     
-    @patch('FACET2_S2E.UTILITY_quickstart.trackBeamHelper')
-    @patch('FACET2_S2E.UTILITY_quickstart.getBeamAtElement')
-    @patch('FACET2_S2E.UTILITY_quickstart.writeBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.trackBeamHelper')
+    @patch('FACET2_S2E.simulators.bmad.core.getBeamAtElement')
+    @patch('FACET2_S2E.simulators.bmad.core.writeBeam')
     def test_track_beam_center_bc20_path(self, mock_write, mock_get_beam, mock_helper):
         """Test trackBeam centerBC20 condition"""
-        from FACET2_S2E.UTILITY_quickstart import trackBeam
+        from FACET2_S2E.simulators.bmad.core import trackBeam
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1334,7 +1334,7 @@ class TestTrackBeam:
         mock_beam.copy = Mock(return_value=mock_beam)
         mock_get_beam.return_value = mock_beam
         
-        with patch('FACET2_S2E.UTILITY_quickstart.centerBeam') as mock_center:
+        with patch('FACET2_S2E.simulators.bmad.core.centerBeam') as mock_center:
             mock_center.return_value = mock_beam
             
             trackBeam(
@@ -1348,12 +1348,12 @@ class TestTrackBeam:
         # centerBeam should be called for BC20 centering
         assert mock_center.called
     
-    @patch('FACET2_S2E.UTILITY_quickstart.trackBeamHelper')
-    @patch('FACET2_S2E.UTILITY_quickstart.getBeamAtElement')
-    @patch('FACET2_S2E.UTILITY_quickstart.writeBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.trackBeamHelper')
+    @patch('FACET2_S2E.simulators.bmad.core.getBeamAtElement')
+    @patch('FACET2_S2E.simulators.bmad.core.writeBeam')
     def test_track_beam_center_mfff_path(self, mock_write, mock_get_beam, mock_helper):
         """Test trackBeam centerMFFF condition"""
-        from FACET2_S2E.UTILITY_quickstart import trackBeam
+        from FACET2_S2E.simulators.bmad.core import trackBeam
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1379,7 +1379,7 @@ class TestTrackBeam:
         mock_beam.copy = Mock(return_value=mock_beam)
         mock_get_beam.return_value = mock_beam
         
-        with patch('FACET2_S2E.UTILITY_quickstart.centerBeam') as mock_center:
+        with patch('FACET2_S2E.simulators.bmad.core.centerBeam') as mock_center:
             mock_center.return_value = mock_beam
             
             trackBeam(
@@ -1396,12 +1396,12 @@ class TestTrackBeam:
         call_args_list = [str(call) for call in mock_center.call_args_list]
         assert any('MFFF' in str(call) for call in call_args_list) or mock_center.call_count > 0
     
-    @patch('FACET2_S2E.UTILITY_quickstart.trackBeamHelper')
-    @patch('FACET2_S2E.UTILITY_quickstart.getBeamAtElement')
-    @patch('FACET2_S2E.UTILITY_quickstart.writeBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.trackBeamHelper')
+    @patch('FACET2_S2E.simulators.bmad.core.getBeamAtElement')
+    @patch('FACET2_S2E.simulators.bmad.core.writeBeam')
     def test_track_beam_plasma_sim_path(self, mock_write, mock_get_beam, mock_helper):
         """Test trackBeam plasmaSIM condition"""
-        from FACET2_S2E.UTILITY_quickstart import trackBeam
+        from FACET2_S2E.simulators.bmad.core import trackBeam
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1430,8 +1430,8 @@ class TestTrackBeam:
         mock_beam.copy = Mock(return_value=mock_beam)
         mock_get_beam.return_value = mock_beam
         
-        with patch('FACET2_S2E.UTILITY_quickstart.run_QPAD') as mock_qpad:
-            with patch('FACET2_S2E.UTILITY_quickstart.ballisticPropagation') as mock_ballistic:
+        with patch('FACET2_S2E.simulators.bmad.core.run_QPAD') as mock_qpad:
+            with patch('FACET2_S2E.simulators.bmad.core.ballisticPropagation') as mock_ballistic:
                 # run_QPAD returns tuple (beam, lsim)
                 mock_qpad.return_value = (mock_beam, 0.1)
                 mock_ballistic.return_value = None
@@ -1457,7 +1457,7 @@ class TestDisableAutoQuadEnergyCompensation:
     
     def test_disable_auto_quad_compensation(self):
         """Test disabling auto quad energy compensation"""
-        from FACET2_S2E.UTILITY_quickstart import disableAutoQuadEnergyCompensation
+        from FACET2_S2E.simulators.bmad.config import disableAutoQuadEnergyCompensation
         
         mock_tao = Mock()
         mock_tao.lat_list = Mock(return_value=[
@@ -1476,7 +1476,7 @@ class TestDisableAutoMagnetEnergyCompensation:
     
     def test_disable_auto_magnet_compensation(self):
         """Test disabling auto magnet energy compensation"""
-        from FACET2_S2E.UTILITY_quickstart import disableAutoMagnetEnergyCompensation
+        from FACET2_S2E.simulators.bmad.config import disableAutoMagnetEnergyCompensation
         
         mock_tao = Mock()
         mock_tao.lat_list = Mock(return_value=[
@@ -1495,7 +1495,7 @@ class TestApplyOtherConfig:
     
     def test_apply_other_config_basic(self):
         """Test applying other config commands"""
-        from FACET2_S2E.UTILITY_quickstart import applyOtherConfig
+        from FACET2_S2E.simulators.bmad.config import applyOtherConfig
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1512,7 +1512,7 @@ class TestApplyOtherConfig:
     
     def test_apply_other_config_empty(self):
         """Test applying empty config"""
-        from FACET2_S2E.UTILITY_quickstart import applyOtherConfig
+        from FACET2_S2E.simulators.bmad.config import applyOtherConfig
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1533,11 +1533,11 @@ class TestApplyOtherConfig:
 class TestLaunchTwissCorrection:
     """Tests for launchTwissCorrection function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.launchTwissCorrectionObjective')
-    @patch('FACET2_S2E.UTILITY_quickstart.scipy.optimize.minimize')
+    @patch('FACET2_S2E.simulators.bmad.lattice.optics.launchTwissCorrectionObjective')
+    @patch('scipy.optimize.minimize')
     def test_launch_twiss_correction_calls_minimize(self, mock_minimize, mock_objective):
         """Test that minimize is called with correct objective and bounds"""
-        from FACET2_S2E.UTILITY_quickstart import launchTwissCorrection
+        from FACET2_S2E.simulators.bmad.lattice.optics import launchTwissCorrection
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1576,11 +1576,11 @@ class TestLaunchTwissCorrection:
             bounds = call_args[1]['bounds']
             assert len(bounds) == 4, "Should have 4 bounds for 4 parameters"
     
-    @patch('FACET2_S2E.UTILITY_quickstart.launchTwissCorrectionObjective')
-    @patch('FACET2_S2E.UTILITY_quickstart.scipy.optimize.minimize')
+    @patch('FACET2_S2E.simulators.bmad.lattice.optics.launchTwissCorrectionObjective')
+    @patch('scipy.optimize.minimize')
     def test_launch_twiss_correction_uses_correct_bounds(self, mock_minimize, mock_objective):
         """Test that minimize bounds are set correctly"""
-        from FACET2_S2E.UTILITY_quickstart import launchTwissCorrection
+        from FACET2_S2E.simulators.bmad.lattice.optics import launchTwissCorrection
         
         mock_tao = Mock()
         mock_tao.cmd = Mock()
@@ -1627,11 +1627,11 @@ class TestLaunchTwissCorrection:
 class TestGeneralizedEmittanceSolver:
     """Tests for generalizedEmittanceSolver function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.generalizedEmittanceSolverObjective')
-    @patch('FACET2_S2E.UTILITY_quickstart.scipy.optimize.minimize')
+    @patch('FACET2_S2E.beam.analysis.generalizedEmittanceSolverObjective')
+    @patch('FACET2_S2E.beam.analysis.scipy.optimize.minimize')
     def test_generalized_emittance_solver_calls_minimize(self, mock_minimize, mock_objective):
         """Test that minimize is called for emittance optimization"""
-        from FACET2_S2E.UTILITY_quickstart import generalizedEmittanceSolver
+        from FACET2_S2E.beam.analysis import generalizedEmittanceSolver
         
         # Create mock data in the expected format
         data = [
@@ -1671,11 +1671,11 @@ class TestGeneralizedEmittanceSolver:
         np.testing.assert_almost_equal(result['alpha'], mock_result.x[1])
         np.testing.assert_almost_equal(result['emitGeo'], mock_result.x[2])
     
-    @patch('FACET2_S2E.UTILITY_quickstart.generalizedEmittanceSolverObjective')
-    @patch('FACET2_S2E.UTILITY_quickstart.scipy.optimize.minimize')
+    @patch('FACET2_S2E.beam.analysis.generalizedEmittanceSolverObjective')
+    @patch('FACET2_S2E.beam.analysis.scipy.optimize.minimize')
     def test_generalized_emittance_solver_with_energy(self, mock_minimize, mock_objective):
         """Test that emit is calculated when energyGeV is provided"""
-        from FACET2_S2E.UTILITY_quickstart import generalizedEmittanceSolver
+        from FACET2_S2E.beam.analysis import generalizedEmittanceSolver
         
         data = [
             {'R11': 1.0, 'R12': 0.5, 'sigma': 1e-3},
@@ -1747,7 +1747,7 @@ class TestTrackBeamHelper:
     
     def test_track_beam_helper_success(self, mock_tao_advanced):
         """Test successful beam tracking"""
-        from FACET2_S2E.UTILITY_quickstart import trackBeamHelper
+        from FACET2_S2E.simulators.bmad.core import trackBeamHelper
         
         trackBeamHelper(mock_tao_advanced)
         
@@ -1759,7 +1759,7 @@ class TestTrackBeamHelper:
     
     def test_track_beam_helper_failure(self, mock_tao_advanced):
         """Test beam tracking failure handling"""
-        from FACET2_S2E.UTILITY_quickstart import trackBeamHelper
+        from FACET2_S2E.simulators.bmad.core import trackBeamHelper
         
         # Make cmd raise exception on first call
         mock_tao_advanced.cmd.side_effect = [Exception("Tracking failed"), None]
@@ -1774,10 +1774,10 @@ class TestTrackBeamHelper:
 class TestGetBeamAtElement:
     """Tests for getBeamAtElement function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
     def test_get_beam_at_element_by_name(self, mock_pg_class, mock_tao_advanced):
         """Test getting beam at element by name"""
-        from FACET2_S2E.UTILITY_quickstart import getBeamAtElement
+        from FACET2_S2E.simulators.bmad.core import getBeamAtElement
         
         # Setup mock ParticleGroup
         mock_pg = Mock()
@@ -1790,10 +1790,10 @@ class TestGetBeamAtElement:
         # Should call bunch_data with element name
         mock_tao_advanced.bunch_data.assert_called_once_with("PR10571")
     
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
     def test_get_beam_at_element_with_tToZ(self, mock_pg_class, mock_tao_advanced):
         """Test getting beam with t to z conversion"""
-        from FACET2_S2E.UTILITY_quickstart import getBeamAtElement
+        from FACET2_S2E.simulators.bmad.core import getBeamAtElement
         
         # Setup mock ParticleGroup with delta_t
         mock_pg = Mock()
@@ -1825,7 +1825,7 @@ class TestGetMatrix:
     
     def test_get_matrix_basic(self, mock_tao_advanced):
         """Test getting transfer matrix between elements"""
-        from FACET2_S2E.UTILITY_quickstart import getMatrix
+        from FACET2_S2E.simulators.bmad.lattice.optics import getMatrix
         
         # Mock show to return matrix strings
         mock_tao_advanced.show.return_value = [
@@ -1846,7 +1846,7 @@ class TestGetMatrix:
     
     def test_get_matrix_with_offsets(self, mock_tao_advanced):
         """Test getting matrix with start/end offsets"""
-        from FACET2_S2E.UTILITY_quickstart import getMatrix
+        from FACET2_S2E.simulators.bmad.lattice.optics import getMatrix
         
         # Mock lat_list to return elements
         mock_tao_advanced.lat_list.return_value = ['START', 'Q1', 'D1', 'Q2', 'END']
@@ -1877,11 +1877,11 @@ class TestGetMatrix:
 class TestSetLatticeAndGetMatrix:
     """Tests for setLatticeAndGetMatrix function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.setLattice')
-    @patch('FACET2_S2E.UTILITY_quickstart.getMatrix')
+    @patch('FACET2_S2E.simulators.bmad.lattice.optics.setLattice')
+    @patch('FACET2_S2E.simulators.bmad.lattice.optics.getMatrix')
     def test_set_lattice_and_get_matrix(self, mock_get_matrix, mock_set_lattice, mock_tao_advanced):
         """Test setting lattice and getting matrix"""
-        from FACET2_S2E.UTILITY_quickstart import setLatticeAndGetMatrix
+        from FACET2_S2E.simulators.bmad.lattice.optics import setLatticeAndGetMatrix
         
         mock_get_matrix.return_value = np.eye(6)
         default_settings = {'key': 'value'}
@@ -1910,10 +1910,10 @@ class TestSetLatticeAndGetMatrix:
 class TestLaunchTwissCorrectionObjective:
     """Tests for launchTwissCorrectionObjective function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.trackBeamHelper')
+    @patch('FACET2_S2E.simulators.bmad.core.trackBeamHelper')
     def test_twiss_correction_objective(self, mock_track, mock_tao_advanced):
         """Test Twiss correction objective function"""
-        from FACET2_S2E.UTILITY_quickstart import launchTwissCorrectionObjective
+        from FACET2_S2E.simulators.bmad.lattice.optics import launchTwissCorrectionObjective
         
         # Mock Twiss parameters
         mock_tao_advanced.ele_twiss.return_value = {
@@ -1946,7 +1946,7 @@ class TestGeneralizedEmittanceSolverObjective:
     
     def test_emittance_solver_objective(self):
         """Test emittance solver objective function"""
-        from FACET2_S2E.UTILITY_quickstart import generalizedEmittanceSolverObjective
+        from FACET2_S2E.beam.analysis import generalizedEmittanceSolverObjective
         
         # Params should be [betaI, alphaI, emittanceGeo] - 3 values not 5
         params = [10.0, 0.5, 1e-6]
@@ -1970,7 +1970,7 @@ class TestEmittance:
     
     def test_emittance_calculation(self):
         """Test emittance calculation"""
-        from FACET2_S2E.UTILITY_quickstart import emittance
+        from FACET2_S2E.beam.analysis import emittance
         
         # Create a mock ParticleGroup
         mock_pg = Mock()
@@ -1989,10 +1989,10 @@ class TestEmittance:
 class TestDisplayMatrix:
     """Tests for displayMatrix function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.display')
+    @patch('FACET2_S2E.simulators.bmad.lattice.optics.display')
     def test_display_matrix(self, mock_display):
         """Test matrix display function"""
-        from FACET2_S2E.UTILITY_quickstart import displayMatrix
+        from FACET2_S2E.simulators.bmad.lattice.optics import displayMatrix
         
         matrix = np.random.rand(6, 6)
         
@@ -2005,10 +2005,10 @@ class TestDisplayMatrix:
 class TestMakeBeamActiveBeamFile:
     """Tests for makeBeamActiveBeamFile function"""
     
-    @patch('FACET2_S2E.UTILITY_quickstart.writeBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.writeBeam')
     def test_make_beam_active_with_tao(self, mock_write, mock_particle_group_advanced, mock_tao_advanced):
         """Test making beam active beam file with tao object"""
-        from FACET2_S2E.UTILITY_quickstart import makeBeamActiveBeamFile
+        from FACET2_S2E.simulators.bmad.core import makeBeamActiveBeamFile
         
         makeBeamActiveBeamFile(mock_particle_group_advanced, tao=mock_tao_advanced)
         
@@ -2018,11 +2018,11 @@ class TestMakeBeamActiveBeamFile:
             mock_tao_advanced.activeFilePath
         )
     
-    @patch('FACET2_S2E.UTILITY_quickstart.writeBeam')
-    @patch('FACET2_S2E.UTILITY_quickstart.filePathGlobal', '/test/path')
+    @patch('FACET2_S2E.simulators.bmad.core.writeBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.filePathGlobal', '/test/path')
     def test_make_beam_active_without_tao(self, mock_write, mock_particle_group_advanced):
         """Test making beam active beam file without tao object"""
-        from FACET2_S2E.UTILITY_quickstart import makeBeamActiveBeamFile
+        from FACET2_S2E.simulators.bmad.core import makeBeamActiveBeamFile
         
         makeBeamActiveBeamFile(mock_particle_group_advanced, tao=None)
         
@@ -2035,7 +2035,7 @@ class TestSmallestIntervalImpliedEmittance:
     
     def test_implied_emittance_with_synthetic_data(self):
         """Test implied emittance calculation with synthetic beam data"""
-        from FACET2_S2E.UTILITY_quickstart import smallestIntervalImpliedEmittance
+        from FACET2_S2E.beam.analysis import smallestIntervalImpliedEmittance
         
         # Create synthetic beam data with known parameters
         np.random.seed(42)
@@ -2095,7 +2095,7 @@ class TestSmallestIntervalImpliedEmittance:
     
     def test_implied_emittance_y_plane(self):
         """Test implied emittance calculation in y plane"""
-        from FACET2_S2E.UTILITY_quickstart import smallestIntervalImpliedEmittance
+        from FACET2_S2E.beam.analysis import smallestIntervalImpliedEmittance
         
         # Create mock ParticleGroup
         mock_P = Mock()
@@ -2137,7 +2137,7 @@ class TestSmallestIntervalImpliedEmittance:
     
     def test_implied_emittance_invalid_plane(self):
         """Test implied emittance with invalid plane returns None"""
-        from FACET2_S2E.UTILITY_quickstart import smallestIntervalImpliedEmittance
+        from FACET2_S2E.beam.analysis import smallestIntervalImpliedEmittance
         
         mock_P = Mock()
         mock_P.x = np.random.normal(0, 1e-3, 100)
@@ -2155,11 +2155,8 @@ class TestIntegrationScenarios:
     
     def test_beam_processing_pipeline(self, mock_particle_group_advanced):
         """Test typical beam processing pipeline"""
-        from FACET2_S2E.UTILITY_quickstart import (
-            centerBeam,
-            sliceBeam,
-            getBeamSpecs
-        )
+        from FACET2_S2E.beam.manipulation import centerBeam, sliceBeam
+        from FACET2_S2E.beam.analysis import getBeamSpecs
         
         # Center the beam
         centered = centerBeam(mock_particle_group_advanced, centerType="mean")

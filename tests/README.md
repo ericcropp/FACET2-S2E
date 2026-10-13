@@ -6,11 +6,17 @@ Comprehensive test coverage for the FACET2-S2E package with unit, integration, a
 
 ```
 tests/
-├── unit/                          (89 tests)
+├── unit/
 │   ├── test_quickstart.py
-│   └── test_initialize_tao.py
-├── integration/                   (17 tests)
-│   └── test_examples_integration.py
+│   ├── test_initialize_tao.py
+│   ├── test_legacy_imports.py
+│   ├── test_beam_generation.py
+│   ├── test_beam_editing.py
+│   ├── test_microbunching.py
+│   └── test_plotting.py
+├── integration/
+│   ├── test_examples_integration.py
+│   └── test_bmad_workflow.py
 ├── smoke/                         (4 tests)
 │   └── test_full_s2e.py
 ├── system/                        (4 tests)
@@ -20,11 +26,25 @@ tests/
 └── README.md
 ```
 
-### Unit Tests (89 tests) - `unit/`
+### Unit Tests - `unit/`
 - **`test_quickstart.py`**: Core utility, mathematical operations, data processing, and advanced functions requiring Tao/bmad integration
 - **`test_initialize_tao.py`**: Tao initialization and configuration
+- **`test_legacy_imports.py`**: The deprecated `UTILITY_*` module paths still import, with a `FutureWarning`
+- **`test_beam_generation.py`**: `make_bunch` (6D covariance, Cholesky, zero and singular covariances, flat profile) and the `make_simple_bunch*` wrappers
+- **`test_beam_editing.py`**: `edit_bunch_parameters(_from_PG)` (sizes, correlations, means, Twiss, no side effects on arguments), `cut_length`, `modifyInputBeamSimple`
+- **`test_microbunching.py`**: Spectrum binning, `get_spectrum`, band analysis, microbunching gain, `make_modulated_bunch`
+- **`test_plotting.py`**: `plotMod` (standalone, embedded in a figure, `z_from_t`), `print_result*`, `make_a_plot`, `enable_plt_styling`
 
-### Integration Tests (17 tests) - `integration/`
+### Integration Tests - `integration/`
+- **`test_bmad_workflow.py`**: The Bmad/DAQ workflow with a **real Tao** (no mocks), in a temporary copy of the
+  repository layout so that nothing is written into the repository:
+  - Lattice queries: `get_element_array`, `get_rij`, `get_tijk` (checked against tracking), `make_comparison_dz_2nd_order`
+  - Magnets and settings: sextupole offsets, `applyBMADCollectiveEffectSettings`
+  - Energy: `tune_to_P0Cs`, dipole field saving/restoring, beam-based energy feedback (`edit_energy_based_on_beam_*`)
+  - Runs: `set_beam`, `run_initialized_sim*`
+  - DAQ database edits with a fake `DATASET`: cavities, quads (with boost PVs), sextupoles, movers, correctors
+  - `get_tao_from_experiment` with a generated beam, a beam file, and the DAQ branch
+  - Tests that take more than ~10 s are marked `slow`
 - **`test_examples_integration.py`**: Real function calls from example notebooks with mocked external dependencies
   - Jitter study functions from `Example - Jitter study.py`
   - Beam operations: ballistic propagation, driver/witness separation, collimation
@@ -43,7 +63,7 @@ tests/
   - Bmad tracking and Twiss parameters
   - QPAD plasma simulation
 
-**Total: 110+ tests**
+**Total: 210+ tests**
 
 ## Quick Start
 
@@ -167,7 +187,7 @@ This allows tests to run in CI/CD and verify logic independently.
 Tests automatically run on GitHub:
 - **Trigger**: Every push and pull request
 - **Workflow**: `.github/workflows/tests.yml`
-- **Runs**: All 110+ tests
+- **Runs**: All 210+ tests
 - **Coverage**: Reports to PR
 - **Fast option**: `pytest -m "not slow"` available
 

@@ -23,11 +23,11 @@ class TestInitializeTao:
     """Comprehensive tests for initializeTao function"""
     
     @patch('os.makedirs')
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
-    @patch('FACET2_S2E.UTILITY_quickstart.Tao')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.Tao')
     def test_env_var_set(self, mock_tao_class, mock_pg, mock_makedirs):
         """Test that environment variable FACET2_LATTICE is set correctly"""
-        from FACET2_S2E.UTILITY_quickstart import initializeTao
+        from FACET2_S2E.simulators.bmad.core import initializeTao
         
         mock_tao_instance = Mock()
         mock_tao_instance.cmd = Mock()
@@ -46,17 +46,17 @@ class TestInitializeTao:
     @pytest.mark.integration
     def test_tao_is_pytao_object(self):
         """Test that returned tao is actually a Tao object - integration test"""
-        from FACET2_S2E.UTILITY_quickstart import initializeTao
+        from FACET2_S2E.simulators.bmad.core import initializeTao
         from pytao import Tao
         result = initializeTao(runSetLatticeTF=False)
         assert isinstance(result, Tao)
     
     @patch('os.makedirs')
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
-    @patch('FACET2_S2E.UTILITY_quickstart.Tao')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.Tao')
     def test_file_paths_handled(self, mock_tao_class, mock_pg, mock_makedirs):
         """Test that file paths are correctly handled for activeFilePath, patchFilePath, qpadSimPath"""
-        from FACET2_S2E.UTILITY_quickstart import initializeTao
+        from FACET2_S2E.simulators.bmad.core import initializeTao
         
         mock_tao_instance = Mock()
         mock_tao_instance.cmd = Mock()
@@ -80,12 +80,12 @@ class TestInitializeTao:
             pass
     
     @patch('os.makedirs')
-    @patch('FACET2_S2E.UTILITY_quickstart.modifyAndSaveInputBeam')
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
-    @patch('FACET2_S2E.UTILITY_quickstart.Tao')
+    @patch('FACET2_S2E.simulators.bmad.core.modifyAndSaveInputBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.Tao')
     def test_required_files_saved(self, mock_tao_class, mock_pg, mock_modify_save, mock_makedirs):
         """Test that modifyAndSaveInputBeam is called with correct outputBeamFilePath"""
-        from FACET2_S2E.UTILITY_quickstart import initializeTao
+        from FACET2_S2E.simulators.bmad.core import initializeTao
         
         mock_tao_instance = Mock()
         mock_tao_instance.cmd = Mock()
@@ -124,12 +124,12 @@ class TestInitializeTao:
         assert call_kwargs.get('numMacroParticles') == num_macro_particles
     
     @patch('os.makedirs')
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
-    @patch('FACET2_S2E.UTILITY_quickstart.runImpact')
-    @patch('FACET2_S2E.UTILITY_quickstart.Tao')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.runImpact')
+    @patch('FACET2_S2E.simulators.bmad.core.Tao')
     def test_impact_t_called_when_enabled(self, mock_tao_class, mock_run_impact, mock_pg, mock_makedirs):
         """Test that IMPACT-T is called when runImpactTF=True"""
-        from FACET2_S2E.UTILITY_quickstart import initializeTao
+        from FACET2_S2E.simulators.bmad.core import initializeTao
         
         mock_tao_instance = Mock()
         mock_tao_instance.cmd = Mock()
@@ -152,12 +152,12 @@ class TestInitializeTao:
         assert mock_run_impact.called
     
     @patch('os.makedirs')
-    @patch('FACET2_S2E.UTILITY_quickstart.modifyAndSaveInputBeam')
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
-    @patch('FACET2_S2E.UTILITY_quickstart.Tao')
+    @patch('FACET2_S2E.simulators.bmad.core.modifyAndSaveInputBeam')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.Tao')
     def test_custom_tao_fields_saved(self, mock_tao_class, mock_pg, mock_modify_save, mock_makedirs):
         """Test that custom tao fields are saved during initialization"""
-        from FACET2_S2E.UTILITY_quickstart import initializeTao
+        from FACET2_S2E.simulators.bmad.core import initializeTao
         
         mock_tao_instance = Mock()
         mock_tao_instance.cmd = Mock()
@@ -188,11 +188,11 @@ class TestInitializeTao:
         assert result.QPADDefaultsFile == qpad_defaults
     
     @patch('os.makedirs')
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
-    @patch('FACET2_S2E.UTILITY_quickstart.Tao')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.Tao')
     def test_csr_off_when_disabled(self, mock_tao_class, mock_pg, mock_makedirs):
         """Test that CSR is turned off when csrTF=False"""
-        from FACET2_S2E.UTILITY_quickstart import initializeTao
+        from FACET2_S2E.simulators.bmad.core import initializeTao
         
         mock_tao_instance = Mock()
         mock_tao_instance.cmd = Mock()
@@ -215,12 +215,12 @@ class TestInitializeTao:
             assert any('csroff' in str(call) for call in cmd_calls)
     
     @patch('os.makedirs')
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
-    @patch('FACET2_S2E.UTILITY_quickstart.setLattice')
-    @patch('FACET2_S2E.UTILITY_quickstart.Tao')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.setLattice')
+    @patch('FACET2_S2E.simulators.bmad.core.Tao')
     def test_set_lattice_called_when_enabled(self, mock_tao_class, mock_set_lattice, mock_pg, mock_makedirs):
         """Test that setLattice is called when runSetLatticeTF=True"""
-        from FACET2_S2E.UTILITY_quickstart import initializeTao
+        from FACET2_S2E.simulators.bmad.core import initializeTao
         
         mock_tao_instance = Mock()
         mock_tao_instance.cmd = Mock()
@@ -241,11 +241,11 @@ class TestInitializeTao:
         assert mock_set_lattice.called
     
     @patch('os.makedirs')
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
-    @patch('FACET2_S2E.UTILITY_quickstart.Tao')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.Tao')
     def test_transverse_wakes_enabled(self, mock_tao_class, mock_pg, mock_makedirs):
         """Test that transverse wakes init file is used when enabled"""
-        from FACET2_S2E.UTILITY_quickstart import initializeTao
+        from FACET2_S2E.simulators.bmad.core import initializeTao
         
         mock_tao_instance = Mock()
         mock_tao_instance.cmd = Mock()
@@ -267,11 +267,11 @@ class TestInitializeTao:
         assert 'tao_transverseWakesOn.init' in call_args or mock_tao_class.called
     
     @patch('os.makedirs')
-    @patch('FACET2_S2E.UTILITY_quickstart.ParticleGroup')
-    @patch('FACET2_S2E.UTILITY_quickstart.Tao')
+    @patch('FACET2_S2E.simulators.bmad.core.ParticleGroup')
+    @patch('FACET2_S2E.simulators.bmad.core.Tao')
     def test_beam_save_locations_set(self, mock_tao_class, mock_pg, mock_makedirs):
         """Test that beam save locations are configured"""
-        from FACET2_S2E.UTILITY_quickstart import initializeTao
+        from FACET2_S2E.simulators.bmad.core import initializeTao
         
         mock_tao_instance = Mock()
         mock_tao_instance.cmd = Mock()

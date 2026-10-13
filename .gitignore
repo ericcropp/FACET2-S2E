@@ -14,3 +14,7 @@ DEEP_ARCHIVE/
 *.egg-info*
 *bmad.digested*
 /tmp/
+
+# Scratch beams written by the simulations (only the folder itself is tracked)
+temp_beam/*
+!temp_beam/.gitkeep
